@@ -1,4 +1,4 @@
-import Header from "../Components/Header";
+import TextHeader from "../Components/TextHeader";
 import {useRef, useState} from "react";
 import InputBox from "../Components/InputBox";
 import Button from "../Components/Button";
@@ -104,7 +104,7 @@ function CreateUser(props) {
     function handleCreate(){
         setToasterMessage("Navigating to Login");
         const email = emailRef.current.getData();
-        const password = emailRef.current.getData();
+        const password = passwordRef.current.getData();
         try{
             setLoaderFlag(true);
             fetch("http://localhost:5000/create-user", {
@@ -139,7 +139,7 @@ function CreateUser(props) {
             <p className="text-text_primary font-black text-center text-2xl fixed top-10">Sum Manager</p>
             <div
                 className="flex flex-col justify-evenly items-center w-[40vw] min-w-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded ">
-                <Header props={{header: "Create User"}}/>
+                <TextHeader props={{header: "Create User"}}/>
                 {
                     toasterVisiblity ? <TosterMessage content={tosterMessage}/> : null
                 }

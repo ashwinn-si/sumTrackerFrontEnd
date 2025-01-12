@@ -1,4 +1,4 @@
-import Header from "../Components/Header";
+import TextHeader from "../Components/TextHeader";
 import InputBox from "../Components/InputBox";
 import Button from "../Components/Button";
 import {use, useEffect, useRef, useState} from "react";
@@ -6,6 +6,7 @@ import EmailChecker from "../Scripts/EmailChecker";
 import TosterMessage from "../Components/TosterMessage";
 import {Link} from "react-router-dom";
 import Loader from "../Components/Loader";
+import {useNavigate} from "react-router-dom";
 
 function LoginPage() {
     const emailRef = useRef();
@@ -13,6 +14,7 @@ function LoginPage() {
     const [tosterMessage , setToasterMessage] = useState(null);
     const [toasterVisiblity, setToasterVisiblity] = useState(false);
     const[loaderFlag, setLoaderFlag] = useState(false);
+    const navigator = useNavigate();
 
     function toasterHelper(message){
         setToasterMessage(message);
@@ -46,7 +48,8 @@ function LoginPage() {
                         if (res.status === 406) {
                             toasterHelper("User Doesn't Exsist")
                         }else if(res.status === 200){
-                            toasterHelper("successfull");
+                            toasterHelper("Logining...!")
+                            navigator(`/${email}/folderdashboard`)
                         }else if(res.status === 404){
                             toasterHelper("password incorrect");
                         }else{
@@ -68,7 +71,7 @@ function LoginPage() {
         <div  className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex justify-center items-center absolute flex-col" >
             <p className="text-text_primary font-black text-center text-2xl fixed top-10">Sum Manager</p>
             <div className="flex flex-col justify-evenly items-center w-[40vw] h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded ">
-                <Header props={{header : "Login Page"}}/>
+                <TextHeader props={{header : "Login Page"}}/>
                 {
                     toasterVisiblity ? <TosterMessage content={tosterMessage}/> : null
                 }
@@ -79,7 +82,7 @@ function LoginPage() {
                     loaderFlag ? <Loader/> : null
                 }
                 <Button props={{content : "Login" , onClick : onLoginClick}} />
-                <Link className="font-light text-text_primary" to="/create">New User ?</Link>
+                <Link className="font-light text-text_primary hover:text-highlight_error transition-all duration-300" to="/create">New User ?</Link>
 
             </div>
         </div>
