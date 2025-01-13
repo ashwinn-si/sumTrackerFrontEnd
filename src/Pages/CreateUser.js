@@ -152,11 +152,6 @@ function CreateUser() {
             <SocialFooter />
             <div className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded">
                 <TextHeader props={{ header: "Create User" }} />
-                <TosterMessage
-                    content={toast.message}
-                    isVisible={toast.isVisible}
-                    onHide={hideToast}
-                />
                 <InputBox props={{ placeholder: "Email Address", type: "email" }} ref={emailRef} />
                 <InputBox props={{ placeholder: "Password", type: "text" }} ref={passwordRef} />
                 {verificationFlag ? (

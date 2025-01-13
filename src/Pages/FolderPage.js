@@ -95,7 +95,7 @@ function FolderPage(props) {
                         />
                     ))
                 }
-                {loaderFlag && <LoaderPage />}
+                {loaderFlag && <LoaderPage loadermessage={"Saving"}/>}
                 <div className="w-full flex justify-center items-center ">
                     <Button props={{ content: "Add Question", onClick: addQuestionHelper }} />
                     <Button props={{ content: "Save", onClick: saveQuestionHelper }} />
