@@ -14,23 +14,22 @@ import TextTitle from "../Components/TextTitle";
 function LoginPage() {
     const emailRef = useRef();
     const passwordRef = useRef();
-    const [toasterState, setToasterState] = useState({
-        message: "Welcome!!",
-        isVisible: false
-    });
     const[loaderFlag, setLoaderFlag] = useState(false);
     const navigator = useNavigate();
     const API_URL = "https://sumtrackerbackend.onrender.com";
 
-    const showToaster = (message) => {
-        setToasterState({
-            message,
-            isVisible: true
-        });
+    const [toast, setToast] = useState({
+        message: '',
+        isVisible: false
+    });
+
+    const showToast = (message) => {
+        setToast({ message, isVisible: true });
+        setTimeout(hideToast, 2000); // Automatically hides after 2 seconds
     };
 
-    const hideToaster = () => {
-        setToasterState(prev => ({
+    const hideToast = () => {
+        setToast(prev => ({
             ...prev,
             isVisible: false
         }));
@@ -58,24 +57,24 @@ function LoginPage() {
                 }).then(res => {
                         setLoaderFlag(false);
                         if (res.status === 406) {
-                            showToaster("User Doesn't Exsist")
+                            showToast("User Doesn't Exsist")
                         }else if(res.status === 200){
-                            showToaster("Login  Successful!")
+                            showToast("Login  Successful!")
                             navigator(`/${email}/folderdashboard`)
                         }else if(res.status === 404){
-                            showToaster("Password Incorrect");
+                            showToast("Password Incorrect");
                         }else{
-                            showToaster("Something went wrong!");
+                            showToast("Something went wrong!");
                         }
                     }
                 )
             }catch(err){
                 setLoaderFlag(false);
-                showToaster("Server Busy");
+                showToast("Server Busy");
             }
 
         }else{
-            showToaster("Invalid Email");
+            showToast("Invalid Email");
         }
     }
 
@@ -89,9 +88,9 @@ function LoginPage() {
                 <TextHeader props={{header: "Login Page"}}/>
 
                 <TosterMessage
-                    content={toasterState.message}
-                    isVisible={toasterState.isVisible}
-                    onHide={hideToaster}
+                    content={toast.message}
+                    isVisible={toast.isVisible}
+                    onHide={hideToast}
                 />
                 <form onSubmit={onLoginClick}>
                     <InputBox

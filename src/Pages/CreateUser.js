@@ -66,7 +66,7 @@ function CreateUser() {
                 setTimeout(() => {
                     showToast("Navigating to home");
                     setTimeout(() => {
-                        navigate("/login");
+                        navigate("/");
                     }, 2000);
                 }, 3000);
             } else {
