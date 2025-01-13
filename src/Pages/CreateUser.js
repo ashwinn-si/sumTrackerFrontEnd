@@ -4,22 +4,26 @@ import InputBox from "../Components/InputBox";
 import Button from "../Components/Button";
 import EmailChecker from "../Scripts/EmailChecker";
 import TosterMessage from "../Components/TosterMessage";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Loader from "../Components/Loader";
+import SocialFooter from "../Components/SocialFooter";
+import LoginPage from "./LoginPage";
+import {useParams} from "react-router";
+import TextTitle from "../Components/TextTitle";
 
 function CreateUser(props) {
     const emailRef = useRef();
     const passwordRef = useRef();
     const OTPRef = useRef();
-    const [tosterMessage , setToasterMessage] = useState(null);
+    const [tosterMessage , setToasterMessage] = useState("Otp Generating");
     const [toasterVisiblity, setToasterVisiblity] = useState(false);
     const[loaderFlag, setLoaderFlag] = useState(false);
     const[verificationFlag, setVerificationFlag] = useState(false);
     const [generateOTPFlag, setGenerateOTPFlag] = useState(true);
     const navigate = useNavigate();
 
-    function toasterHelper(message){
-        setToasterMessage(message);
+    async function toasterHelper(message) {
+        await setToasterMessage(message);
         setToasterVisiblity(true);
         hidToaster()
     }
@@ -136,9 +140,11 @@ function CreateUser(props) {
     return (
         <div
             className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex justify-center items-center absolute flex-col">
-            <p className="text-text_primary font-black text-center text-2xl fixed top-10">Sum Manager</p>
+
+            <TextTitle/>
+            <SocialFooter />
             <div
-                className="flex flex-col justify-evenly items-center w-[40vw] min-w-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded ">
+                className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded ">
                 <TextHeader props={{header: "Create User"}}/>
                 {
                     toasterVisiblity ? <TosterMessage content={tosterMessage}/> : null
@@ -169,6 +175,8 @@ function CreateUser(props) {
                         }
                         </>
                 }
+                <Link className="font-light text-text_primary hover:text-highlight_error transition-all duration-300"
+                      to="/">Already a User!</Link>
             </div>
         </div>
     )

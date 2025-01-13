@@ -6,6 +6,7 @@ import TextHeader from "../Components/TextHeader";
 import FolderAddButton from "../Components/FolderAddButton";
 import AddFolderContainer from "../Components/AddFolderContainer";
 import TosterMessage from "../Components/TosterMessage";
+import {useNavigate} from "react-router-dom";
 
 function FolderDashBoard() {
     const { email } = useParams();
@@ -14,6 +15,7 @@ function FolderDashBoard() {
     const folderNameRef = useRef(null);
     const [tosterMessage , setToasterMessage] = useState(null);
     const [toasterVisiblity, setToasterVisiblity] = useState(false);
+    const navigate = useNavigate();
 
     function toasterHelper(message){
         setToasterMessage(message);
@@ -106,10 +108,19 @@ function FolderDashBoard() {
             }
         })
     }
+
+    function handleOpenFolder(folderName){
+        navigate(`/${email}/${folderName}`);
+    }
+    function backHelper(){
+        navigate("/");
+    }
     return (
         <div
             className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex   absolute flex-col">
-            <Header props={{email: useParams().email}}/>
+            <Header email={useParams().email}
+                    backContext="Logout"
+                    onClickHelper={backHelper}/>
             <TextHeader props={{header: "Available Folders"}}/>
             {
                 folderCreatContainerFlag ? <AddFolderContainer props={{folderGetter : getFolderName}} ref={folderNameRef}/> : null
@@ -122,7 +133,7 @@ function FolderDashBoard() {
                 {
                     availableFolders.map((folder,index) => (
                         <div className="w-[22vw] flex justify-center items-center h-auto mb-5" key={index}>
-                            <FolderButton props={{folderName: folder.FolderName , onClick : handleDeleteFolder}}/>
+                            <FolderButton props={{folderName: folder.FolderName , onDelete : handleDeleteFolder , onOpen : handleOpenFolder}}/>
                         </div>
                     ))
                 }
