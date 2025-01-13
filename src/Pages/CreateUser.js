@@ -25,21 +25,8 @@ function CreateUser() {
     });
 
     const showToast = (message) => {
-        // If there's already a toast showing, hide it first
-        if (toast.isVisible) {
-            setToast(prev => ({ ...prev, isVisible: false }));
-            setTimeout(() => {
-                setToast({
-                    message,
-                    isVisible: true
-                });
-            }, 300);
-        } else {
-            setToast({
-                message,
-                isVisible: true
-            });
-        }
+        setToast({ message, isVisible: true });
+        setTimeout(hideToast, 2000); // Automatically hides after 2 seconds
     };
 
     const hideToast = () => {
@@ -166,7 +153,7 @@ function CreateUser() {
             <div className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded">
                 <TextHeader props={{ header: "Create User" }} />
                 <TosterMessage
-                    message={toast.message}
+                    content={toast.message}
                     isVisible={toast.isVisible}
                     onHide={hideToast}
                 />

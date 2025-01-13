@@ -3,12 +3,12 @@ import {useEffect} from "react";
 function TosterMessage({ content, isVisible, onHide }) {
     useEffect(() => {
         if (isVisible) {
-            const timer = setTimeout(() => {
-                onHide();
-            }, 2000);
-            return () => clearTimeout(timer);
+            console.log("TosterMessage visible with content:", content);
         }
-    }, [isVisible, onHide]);
+        return () => {
+            console.log("TosterMessage unmounted");
+        };
+    }, [isVisible, content]);
 
     if (!isVisible) return null;
 
