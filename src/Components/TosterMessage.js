@@ -14,7 +14,7 @@ function TosterMessage({ content, isVisible, onHide }) {
 
     return (
         <div
-            className="fixed top-5 right-5 p-4 bg-primary border border-border_primary  rounded-md shadow-lg text-text_primary font-semibold transform animate-slideIn">
+            className="fixed top-5 right-5 p-4 bg-primary border border-border_primary rounded-md shadow-lg text-text_primary font-semibold transition-all duration-300 ease-in-out transform translate-y-0 opacity-100">
             {content}
         </div>
     );

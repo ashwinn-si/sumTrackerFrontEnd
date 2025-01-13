@@ -1,118 +1,136 @@
+import TosterMessage from "../Components/TosterMessage";
 import TextHeader from "../Components/TextHeader";
-import {useRef, useState} from "react";
+import SocialFooter from "../Components/SocialFooter";
+import TextTitle from "../Components/TextTitle";
 import InputBox from "../Components/InputBox";
 import Button from "../Components/Button";
-import EmailChecker from "../Scripts/EmailChecker";
-import TosterMessage from "../Components/TosterMessage";
 import {Link, useNavigate} from "react-router-dom";
 import Loader from "../Components/Loader";
-import SocialFooter from "../Components/SocialFooter";
-import LoginPage from "./LoginPage";
-import {useParams} from "react-router";
-import TextTitle from "../Components/TextTitle";
+import EmailChecker from "../Scripts/EmailChecker";
+import {useRef, useState} from "react";
 
-function CreateUser(props) {
+function CreateUser() {
     const emailRef = useRef();
     const passwordRef = useRef();
     const OTPRef = useRef();
-    const [tosterMessage , setToasterMessage] = useState("Otp Generating");
-    const [toasterVisiblity, setToasterVisiblity] = useState(false);
-    const[loaderFlag, setLoaderFlag] = useState(false);
-    const[verificationFlag, setVerificationFlag] = useState(false);
+    const [loaderFlag, setLoaderFlag] = useState(false);
+    const [verificationFlag, setVerificationFlag] = useState(false);
     const [generateOTPFlag, setGenerateOTPFlag] = useState(true);
     const navigate = useNavigate();
-    const API_URL = "https://sumtrackerbackend.onrender.com"
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
-    async function toasterHelper(message) {
-        await setToasterMessage(message);
-        setToasterVisiblity(true);
-        hidToaster()
-    }
+    const [toast, setToast] = useState({
+        message: '',
+        isVisible: false
+    });
 
-    function hidToaster(){
-        setTimeout(() => {
-            setToasterVisiblity(false);
-        }, 4000);
-    }
+    const showToast = (message) => {
+        // If there's already a toast showing, hide it first
+        if (toast.isVisible) {
+            setToast(prev => ({ ...prev, isVisible: false }));
+            setTimeout(() => {
+                setToast({
+                    message,
+                    isVisible: true
+                });
+            }, 300);
+        } else {
+            setToast({
+                message,
+                isVisible: true
+            });
+        }
+    };
 
-    function handleGenerateOTP(){
+    const hideToast = () => {
+        setToast(prev => ({
+            ...prev,
+            isVisible: false
+        }));
+    };
+
+    async function handleGenerateOTP() {
         const email = emailRef.current.getData();
         const password = passwordRef.current.getData();
-        if(EmailChecker(email)) {
-            setToasterVisiblity(true);
-            try{
-                fetch(`${API_URL}/create-user/otp-generation`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                    })
-                }).then(res => {
-                    setLoaderFlag(false);
-                    if(res.status === 200){
-                        setGenerateOTPFlag(false);
-                    }else if(res.status === 404){
-                        toasterHelper("User already exist");
-                        setTimeout(()=>{
-                            toasterHelper("Navigating to home");
-                            setTimeout(()=>{
-                                navigate("/login");
-                            },2000)
-                        },4000)
-                    }else{
-                        toasterHelper("Server Busy");
-                    }
-                })
-            }catch (e){
-                setLoaderFlag(false);
-                toasterHelper("Server Busy");
-            }
-        }else{
-            toasterHelper("Invalid Email");
+
+        if (!EmailChecker(email)) {
+            showToast("Invalid Email");
+            return;
         }
-        setGenerateOTPFlag(false);
+
+        setLoaderFlag(true);
+        try {
+            const response = await fetch(`${API_URL}/create-user/otp-generation`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                })
+            });
+
+            if (response.status === 200) {
+                showToast("OTP Generated Successfully");
+                setGenerateOTPFlag(false);
+            } else if (response.status === 404) {
+                showToast("User already exists");
+                setTimeout(() => {
+                    showToast("Navigating to home");
+                    setTimeout(() => {
+                        navigate("/login");
+                    }, 2000);
+                }, 3000);
+            } else {
+                showToast("Server Busy");
+            }
+        } catch (e) {
+            showToast("Server Busy");
+        } finally {
+            setLoaderFlag(false);
+        }
     }
 
-    function handleVerifyOTP(){
+    async function handleVerifyOTP() {
         const email = emailRef.current.getData();
         const otp = OTPRef.current.getData();
-        try{
-            setLoaderFlag(true);
-            fetch(`${API_URL}/create-user/otp-verification`, {
+
+        setLoaderFlag(true);
+        try {
+            const response = await fetch(`${API_URL}/create-user/otp-verification`, {
                 method: "POST",
                 headers: {
                     'content-type': 'application/json',
                 },
-                body:JSON.stringify({
+                body: JSON.stringify({
                     email,
                     otp
                 })
-            }).then(res => {
-                setLoaderFlag(false);
-                if(res.status === 200){
-                    setVerificationFlag(true);
-                    toasterHelper("OTP successfully verified");
-                }else if(res.status === 404){
-                    toasterHelper("OTP unsccessfull")
-                }else{
-                    toasterHelper("Server Busy");
-                }
-            })
-        }catch(e){
+            });
+
+            if (response.status === 200) {
+                setVerificationFlag(true);
+                showToast("OTP successfully verified");
+            } else if (response.status === 404) {
+                showToast("OTP unsuccessful");
+            } else {
+                showToast("Server Busy");
+            }
+        } catch (e) {
+            showToast("Server Busy");
+        } finally {
             setLoaderFlag(false);
-            toasterHelper("Server Busy");
         }
     }
-    function handleCreate(){
-        setToasterMessage("Navigating to Login");
+
+    async function handleCreate() {
         const email = emailRef.current.getData();
         const password = passwordRef.current.getData();
-        try{
-            setLoaderFlag(true);
-            fetch(`${API_URL}/create-user`, {
+
+        setLoaderFlag(true);
+        try {
+            const response = await fetch(`${API_URL}/create-user`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -121,65 +139,63 @@ function CreateUser(props) {
                     email,
                     password
                 })
-            }).then(res => {
-                setLoaderFlag(false);
-                if(res.status === 200){
-                    toasterHelper("Navigating to Login");
-                    setTimeout(()=>{
+            });
+
+            if (response.status === 200) {
+                showToast("Account created successfully!");
+                setTimeout(() => {
+                    showToast("Navigating to Login");
+                    setTimeout(() => {
                         navigate("/");
-                    },2000)
-                }else{
-                    toasterHelper("Server Busy");
-                }
-            })
-        }catch(e){
+                    }, 2000);
+                }, 3000);
+            } else {
+                showToast("Server Busy");
+            }
+        } catch (e) {
+            showToast("Server Busy");
+        } finally {
             setLoaderFlag(false);
-            toasterHelper("Server Busy");
         }
-
     }
+
     return (
-        <div
-            className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex justify-center items-center absolute flex-col">
-
-            <TextTitle/>
+        <div className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex justify-center items-center absolute flex-col">
+            <TextTitle />
             <SocialFooter />
-            <div
-                className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded ">
-                <TextHeader props={{header: "Create User"}}/>
-                {
-                    toasterVisiblity ? <TosterMessage content={tosterMessage}/> : null
-                }
-                <InputBox props={{placeholder : "Email Address" , type:"email"}} ref={emailRef}/>
-                <InputBox props={{placeholder : "Password" , type:"text"}} ref={passwordRef}/>
-                {
-                    loaderFlag ? <Loader/> : null
-                }
-                {
-                    verificationFlag ?
-                        <>
-                            <Button props={{content : "Create User", onClick : handleCreate}}/>
-
-                        </>
-                        :
-                        <>
-                        {
-                            generateOTPFlag ?
-                                <>
-                                    <Button props={{content : "Generate OTP", onClick : handleGenerateOTP}}/>
-                                </>
-                                :
-                                <>
-                                    <InputBox props={{placeholder : "Enter OTP" , type:"number"}} ref={OTPRef}/>
-                                    <Button props={{content : "Verify OTP", onClick : handleVerifyOTP}} />
-                                </>
-                        }
-                        </>
-                }
-                <Link className="font-light text-text_primary hover:text-highlight_error transition-all duration-300"
-                      to="/">Already a User!</Link>
+            <div className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded">
+                <TextHeader props={{ header: "Create User" }} />
+                <TosterMessage
+                    message={toast.message}
+                    isVisible={toast.isVisible}
+                    onHide={hideToast}
+                />
+                <InputBox props={{ placeholder: "Email Address", type: "email" }} ref={emailRef} />
+                <InputBox props={{ placeholder: "Password", type: "text" }} ref={passwordRef} />
+                {verificationFlag ? (
+                    <Button props={{ content: "Create User", onClick: handleCreate }} />
+                ) : (
+                    <>
+                        {generateOTPFlag ? (
+                            <Button props={{ content: "Generate OTP", onClick: handleGenerateOTP }} />
+                        ) : (
+                            <>
+                                <InputBox props={{ placeholder: "Enter OTP", type: "number" }} ref={OTPRef} />
+                                <Button props={{ content: "Verify OTP", onClick: handleVerifyOTP }} />
+                            </>
+                        )}
+                    </>
+                )}
+                {loaderFlag && <Loader />}
+                <Link
+                    className="font-light text-text_primary hover:text-highlight_error transition-all duration-300"
+                    to="/"
+                >
+                    Already a User!
+                </Link>
             </div>
         </div>
-    )
+    );
 }
+
 export default CreateUser;

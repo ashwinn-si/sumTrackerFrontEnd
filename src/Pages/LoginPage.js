@@ -42,6 +42,7 @@ function LoginPage() {
         e.preventDefault();
         const email = emailRef.current.getData();
         const password = passwordRef.current.getData();
+        setLoaderFlag(true);
         if(EmailChecker(email)) {
 
             try{
@@ -98,10 +99,11 @@ function LoginPage() {
                         ref={emailRef}/>
                     <InputBox props={{placeholder: "Password", type: "text", required: true, autoComplete: "password"}}
                               ref={passwordRef}/>
-                    {
-                        loaderFlag ? <Loader/> : null
-                    }
-                    <div className="v-[100vw] flex justify-center items-center">
+
+                    <div className="v-[100vw] flex justify-center items-center flex-col">
+                        {
+                            loaderFlag ? <Loader/> : null
+                        }
                         <button
                             className="m-2 py-2 px-4 border rounded border-border_primary text-text_primary hover:border-dotted hover:border-highlight_error transition-all duration-300"
                             type="submit"
