@@ -21,6 +21,7 @@ function CreateUser(props) {
     const[verificationFlag, setVerificationFlag] = useState(false);
     const [generateOTPFlag, setGenerateOTPFlag] = useState(true);
     const navigate = useNavigate();
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     async function toasterHelper(message) {
         await setToasterMessage(message);
@@ -40,7 +41,7 @@ function CreateUser(props) {
         if(EmailChecker(email)) {
             setToasterVisiblity(true);
             try{
-                fetch("http://localhost:5000/create-user/otp-generation", {
+                fetch(`${API_URL}/create-user/otp-generation`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -80,7 +81,7 @@ function CreateUser(props) {
         const otp = OTPRef.current.getData();
         try{
             setLoaderFlag(true);
-            fetch("http://localhost:5000/create-user/otp-verification", {
+            fetch(`${API_URL}/create-user/otp-verification`, {
                 method: "POST",
                 headers: {
                     'content-type': 'application/json',
@@ -111,7 +112,7 @@ function CreateUser(props) {
         const password = passwordRef.current.getData();
         try{
             setLoaderFlag(true);
-            fetch("http://localhost:5000/create-user", {
+            fetch(`${API_URL}/create-user`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

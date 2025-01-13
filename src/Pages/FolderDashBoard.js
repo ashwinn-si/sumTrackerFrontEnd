@@ -16,6 +16,7 @@ function FolderDashBoard() {
     const [tosterMessage , setToasterMessage] = useState(null);
     const [toasterVisiblity, setToasterVisiblity] = useState(false);
     const navigate = useNavigate();
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     function toasterHelper(message){
         setToasterMessage(message);
@@ -30,7 +31,7 @@ function FolderDashBoard() {
     }
 
     function allFolderGetter(){
-        fetch(`http://localhost:5000/${email}/folder-dashboard`, {
+        fetch(`${API_URL}/${email}/folder-dashboard`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -60,7 +61,7 @@ function FolderDashBoard() {
     //function to get the folder name from the child component
     async function getFolderName(){
         const folder_name = folderNameRef.current.getData();
-        fetch(`http://localhost:5000/${email}/folder/create`, {
+        fetch(`${API_URL}/${email}/folder/create`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ function FolderDashBoard() {
 
     function handleDeleteFolder(folderName){
         const folder_name = folderName;
-        fetch(`http://localhost:5000/${email}/folder/delete`, {
+        fetch(`${API_URL}/${email}/folder/delete`, {
             method: "DELETE",
             headers: {
                 'content-type': 'application/json',

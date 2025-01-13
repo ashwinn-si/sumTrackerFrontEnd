@@ -14,10 +14,11 @@ function FolderPage(props) {
     const { email , folderName} = useParams();
     const navigate = useNavigate();
     const [loaderFlag, setLoaderFlag] = useState(false);
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     function dataReterival(){
         setAllRefs([]);
-        fetch(`http://localhost:5000/${email}/${folderName}`,{
+        fetch(`${API_URL}/${email}/${folderName}`,{
             method: "GET",
             headers: {
                 'Content-Type': 'application/json'
@@ -58,7 +59,7 @@ function FolderPage(props) {
             }
         }
         setLoaderFlag(true);
-        fetch(`http://localhost:5000/${email}/${folderName}/update`, {
+        fetch(`${API_URL}/${email}/${folderName}/update`, {
             headers: {
                 'Content-Type': 'application/json'
             },

@@ -20,6 +20,7 @@ function LoginPage() {
     });
     const[loaderFlag, setLoaderFlag] = useState(false);
     const navigator = useNavigate();
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     const showToaster = (message) => {
         setToasterState({
@@ -44,7 +45,7 @@ function LoginPage() {
         if(EmailChecker(email)) {
 
             try{
-                fetch("http://localhost:5000/login", {
+                fetch(`${API_URL}/login`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
