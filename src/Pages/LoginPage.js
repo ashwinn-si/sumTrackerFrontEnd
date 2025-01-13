@@ -20,7 +20,7 @@ function LoginPage() {
     });
     const[loaderFlag, setLoaderFlag] = useState(false);
     const navigator = useNavigate();
-    const API_URL = process.env.REACT_APP_API_URL;
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     const showToaster = (message) => {
         setToasterState({

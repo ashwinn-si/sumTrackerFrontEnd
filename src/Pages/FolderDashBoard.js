@@ -16,7 +16,7 @@ function FolderDashBoard() {
     const [tosterMessage , setToasterMessage] = useState(null);
     const [toasterVisiblity, setToasterVisiblity] = useState(false);
     const navigate = useNavigate();
-    const API_URL = process.env.REACT_APP_API_URL;
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     function toasterHelper(message){
         setToasterMessage(message);

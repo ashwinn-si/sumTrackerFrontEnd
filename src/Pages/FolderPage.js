@@ -14,7 +14,7 @@ function FolderPage(props) {
     const { email , folderName} = useParams();
     const navigate = useNavigate();
     const [loaderFlag, setLoaderFlag] = useState(false);
-    const API_URL = process.env.REACT_APP_API_URL;
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     function dataReterival(){
         setAllRefs([]);
