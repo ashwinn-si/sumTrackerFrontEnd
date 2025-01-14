@@ -22,8 +22,8 @@ function FolderPage(props) {
     const [loaderMessage,setLoaderMessage] = useState("");
     const [snippetData ,setSnippetData] = useState(null);
     const [snippetOpenIndex , setSnippetOpenIndex] = useState(0);
-    const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "http://localhost:5000";
+    // const API_URL = "https://sumtrackerbackend.onrender.com";
+    const API_URL = "http://localhost:5000";
 
     function dataRetrieval() {
         setLoaderMessage("Getting data...");
@@ -149,49 +149,93 @@ function FolderPage(props) {
         await saveQuestionHelper();
         await dataRetrieval();
         const excelData = [];
-        await allQuestions.forEach((item, index) => {
-            excelData.push([formateDate(item.CreateDate),formateDate(item.Date), item.QuestionNumber,item.QuestionName,item.Type, item.Status ? "Solved" : "Not Solved" ,item.Revise ? "Revise" : "" ]);
-        })
-        console.log(excelData);
+        for (const item of allQuestions) {
+            excelData.push([
+                formateDate(item.CreateDate),
+                formateDate(item.Date),
+                item.QuestionNumber,
+                item.QuestionName,
+                item.Type,
+                item.Status ? "Solved" : "Not Solved",
+                item.Revise ? "Revise" : ""
+            ]);
+        }
+
+        // Create workbook and worksheet
         const workbook = XLSX.utils.book_new();
-        const colHeading = [["Created Date" , "Date" , "Problem Number", "Problem Name" , "Type" , "Status","Revise"]];
-        const workSheetData = XLSX.utils.json_to_sheet(excelData, { skipHeader: true });
-        XLSX.utils.sheet_add_aoa(workSheetData, colHeading, { origin: "A1" });
+        const colHeadings = [["Created Date", "Date", "Problem Number", "Problem Name", "Type", "Status", "Revise"]];
+
+        // Create worksheet with the data
+        const workSheetData = XLSX.utils.aoa_to_sheet([...colHeadings, ...excelData]);
+
+        // Define styles
         const headerStyle = {
-            font: { bold: true, color: { rgb: "FFFFFF" } },
-            alignment: { horizontal: "center", vertical: "center" },
-        };
-        Object.keys(workSheetData).forEach((key) => {
-            if (key.startsWith("A1") || key.startsWith("B1") || key.startsWith("C1")) {
-                workSheetData[key].s = headerStyle;
+            font: {
+                bold: true,
+                color: { rgb: "FFFFFF" }
+            },
+            alignment: {
+                horizontal: "center",
+                vertical: "center",
+                wrapText: true  // Enable text wrapping
             }
-        });
-        const columnWidths = [
-            { wch: 20 },
-            { wch: 20 },
-            { wch: 20 },
-            { wch: 25 },
-            { wch: 15 },
-            { wch: 15 },
-            { wch: 15 },
-        ];
+        };
 
         const dataStyle = {
-            alignment: { horizontal: "center", vertical: "center" }, // Center alignment
+            alignment: {
+                horizontal: "center",
+                vertical: "center",
+                wrapText: true
+            },
+            border: {  // Added borders for better visibility
+                top: { style: "thin" },
+                bottom: { style: "thin" },
+                left: { style: "thin" },
+                right: { style: "thin" }
+            }
         };
 
-        // Loop through all cells and apply center alignment
-        Object.keys(workSheetData).forEach((key) => {
-            if (workSheetData[key].v) {
-                workSheetData[key].s = dataStyle; // Apply to all data cells
+        // Apply styles
+        const range = XLSX.utils.decode_range(workSheetData['!ref']);
+        for (let R = range.s.r; R <= range.e.r; R++) {
+            for (let C = range.s.c; C <= range.e.c; C++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                if (R === 0) {  // Header row
+                    workSheetData[cellAddress].s = headerStyle;
+                } else {  // Data rows
+                    workSheetData[cellAddress].s = dataStyle;
+                }
             }
+        }
+
+        // Set column widths
+        workSheetData['!cols'] = [
+            { wch: 20 }, // Created Date
+            { wch: 20 }, // Date
+            { wch: 20 }, // Problem Number
+            { wch: 25 }, // Problem Name
+            { wch: 15 }, // Type
+            { wch: 15 }, // Status
+            { wch: 15 }  // Revise
+        ];
+
+        // Freeze first row
+        workSheetData['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+        // Append worksheet to workbook
+        XLSX.utils.book_append_sheet(workbook, workSheetData, folderName);
+
+        // Generate and save file
+        const excelBuffer = XLSX.write(workbook, {
+            bookType: "xlsx",
+            type: "array",
+            cellStyles: true  // Enable cell styles
         });
 
-        workSheetData["!cols"] = columnWidths;
-        workSheetData["!freeze"] = { xSplit: 0, ySplit: 1 };
-        XLSX.utils.book_append_sheet(workbook, workSheetData, folderName);
-        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-        const dataBlob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        const dataBlob = new Blob([excelBuffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        });
+
         saveAs(dataBlob, `${folderName}.xlsx`);
     }
     return (
