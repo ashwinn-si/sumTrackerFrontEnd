@@ -49,37 +49,42 @@ function ForgotPasswordPage() {
         })
     }
 
-    function verifyEmail(){
+    function verifyEmail() {
         const email = emailRef.current.getData();
-        if(!EmailChecker(email)){
-            showToast("Email invalid")
+        if (!EmailChecker(email)) {
+            showToast("Email invalid");
             return null;
         }
-        try{
+        try {
             setLoaderFlag(true);
             fetch(`${API_URL}/${email}/forgot-password`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-
-            }).then((res) => {
-                if(res.status === 200){
-                    showToast("Email verified")
-                    generateOTP(email)
-                    setEmailVerificationFlag(false);
-                }else if(res.status === 404){
-                    showToast("Email doesn't exist")
-                }else{
-                    showToast("Server Busy");
-                }
             })
+                .then((res) => {
+                    setLoaderFlag(false); // Move this here
+                    if (res.status === 200) {
+                        showToast("Email verified");
+                        generateOTP(email);
+                        setEmailVerificationFlag(false);
+                    } else if (res.status === 404) {
+                        showToast("Email doesn't exist");
+                    } else {
+                        showToast("Server Busy");
+                    }
+                })
+                .catch((err) => {
+                    setLoaderFlag(false); // Handle errors
+                    showToast("Server Busy");
+                });
+        } catch (err) {
             setLoaderFlag(false);
-        }catch(err){
             showToast("Server Busy");
-            setLoaderFlag(false);
         }
     }
+
 
     async function handleVerifyOTP() {
         const email = emailRef.current.getData();
