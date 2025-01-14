@@ -4,7 +4,10 @@ function FolderHeader(props) {
     return(
         <div
             className="w-[95vw] p-3 mx-[2.5vw] my-[1vw] flex justify-evenly items-center border border-border_primary rounded text-center">
-            <div className="w-[20vw]">
+            <div className="w-[5vw]">
+
+            </div>
+            <div className="w-[10vw]">
                 <p className="text-l text-text_primary font-semibold">Date</p>
             </div>
             <div className="w-[24vw]">
@@ -21,6 +24,9 @@ function FolderHeader(props) {
             </div>
             <div className="w-[10vw]">
                 <p className="text-l text-text_primary font-semibold">Revise</p>
+            </div>
+            <div className="w-[5vw]">
+                <p className="text-l text-text_primary font-semibold">Snippet</p>
             </div>
         </div>
     )

@@ -7,33 +7,23 @@ import FolderAddButton from "../Components/FolderAddButton";
 import AddFolderContainer from "../Components/AddFolderContainer";
 import TosterMessage from "../Components/TosterMessage";
 import { useNavigate } from "react-router-dom";
+import Loader from "../Components/Loader";
+import LoaderPage from "../Components/LoaderPage";
 
 function FolderDashBoard() {
     const { email } = useParams();
     const [availableFolders, setAvailableFolders] = useState([]);
     const [folderCreatContainerFlag, setFolderCreatContainerFlag] = useState(false);
     const folderNameRef = useRef(null);
-    const [toasterMessage, setToasterMessage] = useState(null);
-    const [toasterVisibility, setToasterVisibility] = useState(false);
+    const [loaderFlag, setLoaderFlag] = useState(false);
+    const [loaderMessage, setLoaderMessage] = useState("Deleting Folder");
     const navigate = useNavigate();
     const API_URL = "https://sumtrackerbackend.onrender.com";
-
-    function toasterHelper(message) {
-        setToasterMessage(message);
-        setToasterVisibility(true);
-    }
-
-    useEffect(() => {
-        let timer;
-        if (toasterVisibility) {
-            timer = setTimeout(() => {
-                setToasterVisibility(false);
-            }, 4000); 
-        }
-        return () => clearTimeout(timer); 
-    }, [toasterVisibility]);
+    // const API_URL = "http://localhost:5000";
 
     function allFolderGetter() {
+        setLoaderFlag(true);
+        setLoaderMessage("Getting all folders...");
         fetch(`${API_URL}/${email}/folder-dashboard`, {
             method: "GET",
             headers: {
@@ -52,6 +42,7 @@ function FolderDashBoard() {
             .catch((err) => {
                 console.error("Error fetching folders:", err);
             });
+        setLoaderFlag(false);
     }
 
     
@@ -63,6 +54,8 @@ function FolderDashBoard() {
 
     async function getFolderName() {
         const folder_name = folderNameRef.current.getData();
+        setLoaderFlag(true);
+        setLoaderMessage("Creating folder...");
         fetch(`${API_URL}/${email}/folder/create`, {
             method: "POST",
             headers: {
@@ -74,12 +67,11 @@ function FolderDashBoard() {
             })
         }).then(res => {
             if (res.status === 409) {
-                toasterHelper("Folder Already Exists");
+                setLoaderFlag(false);
             } else if (res.status === 401) {
-                toasterHelper("Server Busy");
+                setLoaderFlag(false);
             } else {
                 allFolderGetter();
-                toasterHelper("Folder Created !!");
             }
         })
         setFolderCreatContainerFlag(false);
@@ -91,6 +83,8 @@ function FolderDashBoard() {
 
     function handleDeleteFolder(folderName) {
         const folder_name = folderName;
+        setLoaderFlag(true);
+        setLoaderMessage("Deleting folder...");
         fetch(`${API_URL}/${email}/folder/delete`, {
             method: "DELETE",
             headers: {
@@ -101,10 +95,10 @@ function FolderDashBoard() {
             })
         }).then(res => {
             if (res.ok) {
-                toasterHelper("Folder Deleted !!");
+                setLoaderFlag(false);
                 allFolderGetter();
             } else {
-                toasterHelper("Server Busy !!");
+                setLoaderFlag(false);
             }
         })
     }
@@ -127,7 +121,7 @@ function FolderDashBoard() {
                 folderCreatContainerFlag ? <AddFolderContainer props={{ folderGetter: getFolderName }} ref={folderNameRef} /> : null
             }
             {
-                toasterVisibility ? <TosterMessage content={toasterMessage} /> : null
+                loaderFlag && <LoaderPage loadermessage={loaderMessage} />
             }
             <div className="w-[95vw] p-3 mx-[2.5vw]  my-[1vw] flex justify-evenly border border-border_primary rounded flex-row flex-wrap">
                 {

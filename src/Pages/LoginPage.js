@@ -17,6 +17,7 @@ function LoginPage() {
     const[loaderFlag, setLoaderFlag] = useState(false);
     const navigator = useNavigate();
     const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "http://localhost:5000";
 
     const [toast, setToast] = useState({
         message: '',
@@ -82,40 +83,56 @@ function LoginPage() {
         <div
             className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex justify-center items-center absolute flex-col">
             <TextTitle/>
-            <SocialFooter />
+            <SocialFooter/>
             <div
-                className="flex flex-col justify-evenly items-center w-[40vw]  min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded ">
-                <TextHeader props={{header: "Login Page"}}/>
+                className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded">
+                <TextHeader props={{header: "Login"}}/>
 
                 <TosterMessage
                     content={toast.message}
                     isVisible={toast.isVisible}
                     onHide={hideToast}
                 />
+
                 <form onSubmit={onLoginClick}>
                     <InputBox
                         props={{placeholder: "Email Address", type: "email", required: true, autoComplete: "email"}}
-                        ref={emailRef}/>
-                    <InputBox props={{placeholder: "Password", type: "text", required: true, autoComplete: "password"}}
-                              ref={passwordRef}/>
+                        ref={emailRef}
+                    />
+                    <InputBox
+                        props={{placeholder: "Password", type: "text", required: true, autoComplete: "password"}}
+                        ref={passwordRef}
+                    />
 
                     <div className="v-[100vw] flex justify-center items-center flex-col">
-                        {
-                            loaderFlag ? <Loader/> : null
-                        }
+                        {loaderFlag ? <Loader/> : null}
                         <button
                             className="m-2 py-2 px-4 border rounded border-border_primary text-text_primary hover:border-dotted hover:border-highlight_error transition-all duration-300"
                             type="submit"
                         >
-                            Login In
+                            Login
                         </button>
                     </div>
                 </form>
-                <Link className="font-light text-text_primary hover:text-highlight_error transition-all duration-300"
-                      to="/create">New User ?</Link>
 
+                <div className="flex justify-between w-full px-4 mt-4 ">
+                    <Link
+                        to="/create"
+                        className="font-light text-text_primary hover:text-highlight_error transition-all duration-300 text-center w-full"
+                    >
+                        New User ?
+                    </Link>
+
+                    <Link
+                        to="/forgot-password"
+                        className="  font-light text-text_primary hover:text-highlight_error transition-all duration-300 text-center w-full"
+                    >
+                        Forgot Password !
+                    </Link>
+                </div>
             </div>
         </div>
+
     )
 }
 

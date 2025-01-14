@@ -23,7 +23,7 @@ const  FolderInputBox = forwardRef((props, ref) => {
                 onChange={onChangeHandler}
                 type = {props.props.type}
                 value={value}
-                className = "m-3 p-2 bg-transparent rounded-md text-left border-border_primary border text-text_secondary  hover:border-dotted transition-all duration-300 text-center"
+                className = "w-[75%] m-[2.5%] p-[2%] bg-transparent rounded-md text-left border-border_primary border text-text_secondary  hover:border-dotted transition-all duration-300 text-center"
             />
         </div>
     );

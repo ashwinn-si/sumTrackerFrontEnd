@@ -1,0 +1,194 @@
+import TextTitle from "../Components/TextTitle";
+import SocialFooter from "../Components/SocialFooter";
+import TextHeader from "../Components/TextHeader";
+import InputBox from "../Components/InputBox";
+import React, {useRef, useState} from "react";
+import Button from "../Components/Button";
+import TosterMessage from "../Components/TosterMessage";
+import EmailChecker from "../Scripts/EmailChecker";
+import Loader from "../Components/Loader";
+import {useNavigate} from "react-router-dom";
+
+function ForgotPasswordPage() {
+    const emailRef = useRef(null);
+    const [emailVerificationFlag, setEmailVerificationFlag] = useState(true);
+    const [loaderFlag, setLoaderFlag] = useState(false);
+    const [OTPFlag, setOTPFlag] = useState(false);
+    const otpRef = useRef(null);
+    const [passwordFlag,setPasswordFlag] = useState(false);
+    const passRef = useRef(null);
+    const navigate = useNavigate();
+    const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "http://localhost:5000";
+
+    const [toast, setToast] = useState({
+        message: '',
+        isVisible: false
+    });
+
+    const showToast = (message) => {
+        setToast({ message, isVisible: true });
+        setTimeout(hideToast, 2000); // Automatically hides after 2 seconds
+    };
+
+    const hideToast = () => {
+        setToast(prev => ({
+            ...prev,
+            isVisible: false
+        }));
+    };
+
+    function verifyEmail(){
+        const email = emailRef.current.getData();
+        if(!EmailChecker(email)){
+            showToast("Email invalid")
+            return null;
+        }
+        try{
+            setLoaderFlag(true);
+            fetch(`${API_URL}/${email}/forgot-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+
+            }).then((res) => {
+                if(res.status === 200){
+                    showToast("Email verified")
+                    fetch(`${API_URL}/${email}/forgot-password/generateOTP`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    }).then((res) => {
+                        showToast("OTP Generated !")
+                        setOTPFlag(true)
+                    })
+                    setEmailVerificationFlag(false);
+                }else if(res.status === 404){
+                    showToast("Email doesn't exist")
+                }else{
+                    showToast("Server Busy");
+                }
+            })
+            setLoaderFlag(false);
+        }catch(err){
+            showToast("Server Busy");
+            setLoaderFlag(false);
+        }
+    }
+
+    async function handleVerifyOTP() {
+        const email = emailRef.current.getData();
+        const otp = otpRef.current.getData();
+        setLoaderFlag(true);
+        try {
+            const response = await fetch(`${API_URL}/${email}/forgot-password/generateOTP`, {
+                method: "POST",
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    otp
+                })
+            });
+
+            if (response.status === 200) {
+                setPasswordFlag(true);
+                setOTPFlag(false);
+                showToast("OTP successfully verified");
+            } else if (response.status === 404) {
+                showToast("OTP unsuccessful");
+            } else {
+                showToast("Server Busy");
+            }
+        } catch (e) {
+            showToast("Server Busy");
+        } finally {
+            setLoaderFlag(false);
+        }
+    }
+
+    async function handleChangePassword() {
+        const email = emailRef.current.getData();
+        const password = passRef.current.getData();
+
+        try {
+            const response = await fetch(`${API_URL}/${email}/forgot-password/reset`, {
+                method: "POST",
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+            if (response.status === 200) {
+                showToast("Password Changed successfully!");
+                showToast("navigating to Login");
+                setTimeout(()=>{
+                    navigate("/");
+                },2000)
+            }
+            else {
+                showToast("Server Busy");
+            }
+        } catch (e) {
+            showToast("Server Busy");
+        } finally {
+            setLoaderFlag(false);
+        }
+    }
+
+    return (
+        <div
+            className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex justify-center items-center absolute flex-col">
+            <TextTitle/>
+            <SocialFooter/>
+            <div
+                className="flex flex-col justify-evenly items-center w-[40vw]  min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded ">
+                <TextHeader props={{header: "Forgot Password"}}/>
+                <TosterMessage
+                    content={toast.message}
+                    isVisible={toast.isVisible}
+                    onHide={hideToast}
+                />
+                <InputBox
+                    props={{placeholder: "Email Address", type: "email", required: true, autoComplete: "email"}}
+                    ref={emailRef}
+                />
+                {
+                    emailVerificationFlag && <Button props={{ content: "Verify Email", onClick: verifyEmail }} />
+                }
+                {
+                    OTPFlag ?
+                        <>
+                            <InputBox
+                                props={{placeholder: "OTP", type: "number", required: true, autoComplete: "email"}}
+                                ref={otpRef}
+                            />
+                            <Button props={{ content: "Verify OTP", onClick: handleVerifyOTP }} />
+                        </>
+                        : null
+                }
+                {
+                    passwordFlag ?
+                        <>
+                            <InputBox
+                                props={{placeholder: "New Password", type: "text", required: true, autoComplete: "email"}}
+                                ref={passRef}
+                            />
+                            <Button props={{ content: "Change", onClick: handleChangePassword }} />
+                        </> : null
+                }
+                {loaderFlag ? <Loader/> : null}
+            </div>
+        </div>
+    )
+
+}
+
+export default ForgotPasswordPage;

@@ -13,7 +13,7 @@ const DropDownBox = forwardRef((props,ref) =>{
         setValue(e.target.value);
     }
     return (
-        <select className="bg-black border border-border_primary p-2 rounded-md text-left text-text_secondary " value={value} onChange={changeHandler}
+        <select className="bg-black border border-border_primary p-[2%] rounded-md text-left text-text_secondary " value={value} onChange={changeHandler}
         >
             <option value="easy" className="text-text_primary">Easy</option>
             <option value="medium" className="text-text_primary">Medium</option>

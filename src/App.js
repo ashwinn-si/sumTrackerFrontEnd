@@ -6,6 +6,7 @@ import FolderDashBoard from "./Pages/FolderDashBoard";
 import FolderPage from "./Pages/FolderPage";
 import {useEffect, useState} from "react";
 import MobileUsersPage from "./Pages/MobileUsersPage";
+import ForgotPasswordPage from "./Pages/ForgotPasswordPage";
 
 function App() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/create" element={<CreateUser />} />
                     <Route path="/:email/folderdashboard" element={<FolderDashBoard />} />
                     <Route path="/:email/:folderName" element={<FolderPage />} />
+                    <Route path="/forgot-password" element ={<ForgotPasswordPage />} />
                   </Routes>
                 </BrowserRouter>
               </div>

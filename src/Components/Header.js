@@ -14,8 +14,6 @@ function Header({ email, backContext = "Back", onClickHelper }) {
     return(
         <div className="w-[95vw] p-3 mx-[2.5vw] my-[1vw] flex justify-between items-center border border-border_primary rounded">
             <div>
-                <button
-                    className="text-l text-text_primary font-semibold flex items-center space-x-2 hover:translate-x-2 transition-transform">
                     <button
                         className="text-l text-text_primary font-semibold flex items-center space-x-2 hover:translate-x-2 transition-transform"
                         onClick={onClickHelper}>
@@ -29,8 +27,6 @@ function Header({ email, backContext = "Back", onClickHelper }) {
 
                         <span>{backContext}</span>
                     </button>
-
-                </button>
 
             </div>
             <div>

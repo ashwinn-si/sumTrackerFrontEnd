@@ -1,14 +1,6 @@
 import {useEffect} from "react";
 
 function TosterMessage({ content, isVisible, onHide }) {
-    useEffect(() => {
-        if (isVisible) {
-            console.log("TosterMessage visible with content:", content);
-        }
-        return () => {
-            console.log("TosterMessage unmounted");
-        };
-    }, [isVisible, content]);
 
     if (!isVisible) return null;
 
