@@ -6,7 +6,9 @@
     font-family: 'Montserrat';
     src:local("Montserrat"), url("./Assests/Fonts/Montserrat.ttf") format("truetype");
 }
-
+body{
+    overflow-x: hidden ;
+}
 @keyframes slideInFromRight {
     0% {
         transform: translateX(100%);
@@ -18,4 +20,48 @@
 
 .animate-slideIn {
     animation: slideInFromRight 0.5s ease-in-out;
+}
+::-webkit-scrollbar {
+    width: 5px; /* Slightly wider for better usability */
+    height: 5px; /* Same width for horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #e5e7eb; /* Tailwind's gray-200: Neutral light gray track */
+    border-radius: 5px; /* Rounded edges for the track */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #6b7280; /* Tailwind's gray-500: Neutral dark thumb */
+    border-radius: 10px; /* Rounded scrollbar thumb */
+    border: 2px solid #e5e7eb; /* Creates a gap effect around the thumb */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
+}
+
+/* Hover effect for scrollbar thumb */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #4b5563; /* Darker gray on hover */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Adds a glow-like effect */
+}
+
+/* Active state for when dragging the scrollbar thumb */
+::-webkit-scrollbar-thumb:active {
+    background-color: #374151; /* Tailwind's gray-700: Even darker gray */
+}
+
+/* For non-WebKit browsers (fallback for Firefox on Ubuntu) */
+* {
+    scrollbar-width: auto; /* Default width for better cross-browser compatibility */
+    scrollbar-color: #6b7280 #e5e7eb; /* Gray thumb with light gray track */
+}
+
+/* Optional: Hide scrollbars while allowing scroll behavior */
+.scroll-hidden {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+
+.scroll-hidden::-webkit-scrollbar {
+    display: none; /* WebKit-based browsers */
 }

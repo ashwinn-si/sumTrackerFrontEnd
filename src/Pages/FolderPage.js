@@ -8,6 +8,8 @@ import Button from "../Components/Button";
 import { useNavigate } from "react-router-dom";
 import LoaderPage from "../Components/LoaderPage";
 import SnippetContainer from "../Components/SnippetContainer";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 function FolderPage(props) {
     const [AllRefs, setAllRefs] = useState([]);
@@ -20,8 +22,8 @@ function FolderPage(props) {
     const [loaderMessage,setLoaderMessage] = useState("");
     const [snippetData ,setSnippetData] = useState(null);
     const [snippetOpenIndex , setSnippetOpenIndex] = useState(0);
-    const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "http://localhost:5000";
+    // const API_URL = "https://sumtrackerbackend.onrender.com";
+    const API_URL = "http://localhost:5000";
 
     function dataRetrieval() {
         setLoaderMessage("Getting data...");
@@ -134,6 +136,64 @@ function FolderPage(props) {
         }
     }, [email, folderName]);
 
+    function formateDate(isoString) {
+        const date = new Date(isoString);
+        const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const year = date.getFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+    //function to generate excel
+    async function generateExcel() {
+        await saveQuestionHelper();
+        await dataRetrieval();
+        const excelData = [];
+        await allQuestions.forEach((item, index) => {
+            excelData.push([formateDate(item.CreateDate),formateDate(item.Date), item.QuestionNumber,item.QuestionName,item.Type, item.Status ? "Solved" : "Not Solved" ,item.Revise ? "Revise" : "" ]);
+        })
+        console.log(excelData);
+        const workbook = XLSX.utils.book_new();
+        const colHeading = [["Created Date" , "Date" , "Problem Number", "Problem Name" , "Type" , "Status","Revise"]];
+        const workSheetData = XLSX.utils.json_to_sheet(excelData, { skipHeader: true });
+        XLSX.utils.sheet_add_aoa(workSheetData, colHeading, { origin: "A1" });
+        const headerStyle = {
+            font: { bold: true, color: { rgb: "FFFFFF" } },
+            alignment: { horizontal: "center", vertical: "center" },
+        };
+        Object.keys(workSheetData).forEach((key) => {
+            if (key.startsWith("A1") || key.startsWith("B1") || key.startsWith("C1")) {
+                workSheetData[key].s = headerStyle;
+            }
+        });
+        const columnWidths = [
+            { wch: 20 },
+            { wch: 20 },
+            { wch: 20 },
+            { wch: 25 },
+            { wch: 15 },
+            { wch: 15 },
+            { wch: 15 },
+        ];
+
+        const dataStyle = {
+            alignment: { horizontal: "center", vertical: "center" }, // Center alignment
+        };
+
+        // Loop through all cells and apply center alignment
+        Object.keys(workSheetData).forEach((key) => {
+            if (workSheetData[key].v) {
+                workSheetData[key].s = dataStyle; // Apply to all data cells
+            }
+        });
+
+        workSheetData["!cols"] = columnWidths;
+        workSheetData["!freeze"] = { xSplit: 0, ySplit: 1 };
+        XLSX.utils.book_append_sheet(workbook, workSheetData, folderName);
+        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const dataBlob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        saveAs(dataBlob, `${folderName}.xlsx`);
+    }
     return (
         <div className="font-Montserrat bg-netural w-[100vw] min-h-[100vh] flex absolute flex-col">
             <Header email={email} backContext="Back" onClickHelper={backHelper} />
@@ -170,6 +230,7 @@ function FolderPage(props) {
                 {loaderFlag && <LoaderPage loadermessage={loaderMessage}/>}
                 <div className="w-full flex justify-center items-center ">
                     <Button props={{ content: "Add Question", onClick: addQuestionHelper }} />
+                    <Button props={{ content: "Generate Excel", onClick: generateExcel }} />
                 </div>
 
             </div>

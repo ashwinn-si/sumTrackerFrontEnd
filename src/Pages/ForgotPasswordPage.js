@@ -18,8 +18,9 @@ function ForgotPasswordPage() {
     const [passwordFlag,setPasswordFlag] = useState(false);
     const passRef = useRef(null);
     const navigate = useNavigate();
-    const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "http://localhost:5000";
+    const [count , setCount] = useState(0);
+    // const API_URL = "https://sumtrackerbackend.onrender.com";
+    const API_URL = "http://localhost:5000";
 
     const [toast, setToast] = useState({
         message: '',
@@ -38,15 +39,18 @@ function ForgotPasswordPage() {
         }));
     };
     function generateOTP(email) {
-        fetch(`${API_URL}/${email}/forgot-password/generateOTP`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then((res) => {
-            showToast("OTP Generated !")
-            setOTPFlag(true)
-        })
+            fetch(`${API_URL}/${email}/forgot-password/generateOTP`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }).then((res) => {
+                showToast("OTP Generated !")
+                setOTPFlag(true)
+            })
+            setCount(2);
+
+
     }
 
     function verifyEmail() {
@@ -67,7 +71,7 @@ function ForgotPasswordPage() {
                     setLoaderFlag(false); // Move this here
                     if (res.status === 200) {
                         showToast("Email verified");
-                        generateOTP(email);
+                        generateOTP(email,count);
                         setEmailVerificationFlag(false);
                     } else if (res.status === 404) {
                         showToast("Email doesn't exist");
