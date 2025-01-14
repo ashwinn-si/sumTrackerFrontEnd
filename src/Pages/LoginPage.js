@@ -16,8 +16,8 @@ function LoginPage() {
     const passwordRef = useRef();
     const[loaderFlag, setLoaderFlag] = useState(false);
     const navigator = useNavigate();
-    // const API_URL = "https://sumtrackerbackend.onrender.com";
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "http://localhost:5000";
 
     const [toast, setToast] = useState({
         message: '',

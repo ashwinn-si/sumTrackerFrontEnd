@@ -19,8 +19,8 @@ function FolderDashBoard() {
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [loaderMessage, setLoaderMessage] = useState("Deleting Folder");
     const navigate = useNavigate();
-    // const API_URL = "https://sumtrackerbackend.onrender.com";
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "http://localhost:5000";
 
     function allFolderGetter() {
         setLoaderMessage("Getting all folders...");

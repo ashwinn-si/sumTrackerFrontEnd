@@ -22,9 +22,8 @@ function FolderPage(props) {
     const [loaderMessage,setLoaderMessage] = useState("");
     const [snippetData ,setSnippetData] = useState(null);
     const [snippetOpenIndex , setSnippetOpenIndex] = useState(0);
-    // const API_URL = "https://sumtrackerbackend.onrender.com";
-    const API_URL = "http://localhost:5000";
-
+    const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "http://localhost:5000";
     function dataRetrieval() {
         setLoaderMessage("Getting data...");
         setLoaderFlag(true);  // Start loading indicator
