@@ -22,8 +22,8 @@ function FolderDashBoard() {
     // const API_URL = "http://localhost:5000";
 
     function allFolderGetter() {
-        setLoaderFlag(true);
         setLoaderMessage("Getting all folders...");
+        setLoaderFlag(true);
         fetch(`${API_URL}/${email}/folder-dashboard`, {
             method: "GET",
             headers: {
@@ -54,8 +54,8 @@ function FolderDashBoard() {
 
     async function getFolderName() {
         const folder_name = folderNameRef.current.getData();
-        setLoaderFlag(true);
         setLoaderMessage("Creating folder...");
+        setLoaderFlag(true);
         fetch(`${API_URL}/${email}/folder/create`, {
             method: "POST",
             headers: {
@@ -83,8 +83,8 @@ function FolderDashBoard() {
 
     function handleDeleteFolder(folderName) {
         const folder_name = folderName;
-        setLoaderFlag(true);
         setLoaderMessage("Deleting folder...");
+        setLoaderFlag(true);
         fetch(`${API_URL}/${email}/folder/delete`, {
             method: "DELETE",
             headers: {

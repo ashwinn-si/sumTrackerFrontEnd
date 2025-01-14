@@ -17,12 +17,14 @@ function FolderPage(props) {
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [snippetFlag ,setSnippetFlag] = useState(false);
     const [snippetHeader, setSnippetHeader] = useState("");
+    const [loaderMessage,setLoaderMessage] = useState("");
     const [snippetData ,setSnippetData] = useState(null);
     const [snippetOpenIndex , setSnippetOpenIndex] = useState(0);
     const API_URL = "https://sumtrackerbackend.onrender.com";
     // const API_URL = "http://localhost:5000";
 
     function dataRetrieval() {
+        setLoaderMessage("Getting data...");
         setLoaderFlag(true);  // Start loading indicator
         setAllRefs([]);
         fetch(`${API_URL}/${email}/${folderName}`, {
@@ -68,7 +70,7 @@ function FolderPage(props) {
         filteredData.map((item,index) => {
             item.Snippet = filterQuestionData[index].Snippet;
         })
-
+        setLoaderMessage("Saving data...");
         setLoaderFlag(true);  // Start loading indicator
         fetch(`${API_URL}/${email}/${folderName}/update`, {
             headers: {
@@ -165,7 +167,7 @@ function FolderPage(props) {
                         return null; // Skip rendering for null/undefined items
                     })
                 }
-                {loaderFlag && <LoaderPage loadermessage={"Saving"}/>}
+                {loaderFlag && <LoaderPage loadermessage={loaderMessage}/>}
                 <div className="w-full flex justify-center items-center ">
                     <Button props={{ content: "Add Question", onClick: addQuestionHelper }} />
                 </div>

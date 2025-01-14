@@ -37,6 +37,17 @@ function ForgotPasswordPage() {
             isVisible: false
         }));
     };
+    function generateOTP(email) {
+        fetch(`${API_URL}/${email}/forgot-password/generateOTP`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then((res) => {
+            showToast("OTP Generated !")
+            setOTPFlag(true)
+        })
+    }
 
     function verifyEmail(){
         const email = emailRef.current.getData();
@@ -55,15 +66,7 @@ function ForgotPasswordPage() {
             }).then((res) => {
                 if(res.status === 200){
                     showToast("Email verified")
-                    fetch(`${API_URL}/${email}/forgot-password/generateOTP`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    }).then((res) => {
-                        showToast("OTP Generated !")
-                        setOTPFlag(true)
-                    })
+                    generateOTP(email)
                     setEmailVerificationFlag(false);
                 }else if(res.status === 404){
                     showToast("Email doesn't exist")
