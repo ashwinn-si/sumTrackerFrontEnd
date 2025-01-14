@@ -19,7 +19,7 @@ const  InputBox = forwardRef((props, ref) => {
                 placeholder={props.props.placeholder}
                 onChange={onChangeHandler}
                 type = {props.props.type}
-                autocomplete="on"
+                autoComplete={props.props.autocomplete || "on"}
                 required={props.required || false}
                 className = "m-3 p-2 bg-transparent rounded-md text-left border-border_primary border text-text_secondary  hover:border-dotted transition-all duration-300 text-center"
             />

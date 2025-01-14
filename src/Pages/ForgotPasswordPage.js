@@ -19,8 +19,8 @@ function ForgotPasswordPage() {
     const passRef = useRef(null);
     const navigate = useNavigate();
     const [count , setCount] = useState(0);
-    // const API_URL = "https://sumtrackerbackend.onrender.com";
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "http://localhost:5000";
 
     const [toast, setToast] = useState({
         message: '',

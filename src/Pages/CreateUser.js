@@ -17,8 +17,8 @@ function CreateUser() {
     const [verificationFlag, setVerificationFlag] = useState(false);
     const [generateOTPFlag, setGenerateOTPFlag] = useState(true);
     const navigate = useNavigate();
-    // const API_URL = "https://sumtrackerbackend.onrender.com";
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "http://localhost:5000";
 
     const [toast, setToast] = useState({
         message: '',
@@ -158,8 +158,8 @@ function CreateUser() {
                     isVisible={toast.isVisible}
                     onHide={hideToast}
                 />
-                <InputBox props={{ placeholder: "Email Address", type: "email" }} ref={emailRef} />
-                <InputBox props={{ placeholder: "Password", type: "text" }} ref={passwordRef} />
+                <InputBox props={{ placeholder: "Email Address", type: "email" ,autoComplete: "email"}} ref={emailRef} />
+                <InputBox props={{ placeholder: "Password", type: "text",autoComplete: "password" }} ref={passwordRef} />
                 {verificationFlag ? (
                     <Button props={{ content: "Create User", onClick: handleCreate }} />
                 ) : (
@@ -168,7 +168,7 @@ function CreateUser() {
                             <Button props={{ content: "Generate OTP", onClick: handleGenerateOTP }} />
                         ) : (
                             <>
-                                <InputBox props={{ placeholder: "Enter OTP", type: "number" }} ref={OTPRef} />
+                                <InputBox props={{ placeholder: "Enter OTP", type: "number" ,autoComplete: "on"}} ref={OTPRef} />
                                 <Button props={{ content: "Verify OTP", onClick: handleVerifyOTP }} />
                             </>
                         )}
