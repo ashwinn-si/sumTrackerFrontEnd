@@ -8,6 +8,7 @@
 }
 body{
     overflow-x: hidden ;
+    cursor: none;
 }
 @keyframes slideInFromRight {
     0% {
@@ -64,4 +65,8 @@ body{
 
 .scroll-hidden::-webkit-scrollbar {
     display: none; /* WebKit-based browsers */
+}
+
+* {
+    cursor: none; /* Hide default cursor */
 }

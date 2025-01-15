@@ -7,6 +7,7 @@ import FolderPage from "./Pages/FolderPage";
 import {useEffect, useState} from "react";
 import MobileUsersPage from "./Pages/MobileUsersPage";
 import ForgotPasswordPage from "./Pages/ForgotPasswordPage";
+import CustomCursor from "./Components/CustomCursor";
 
 function App() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -28,6 +29,7 @@ function App() {
           ? <MobileUsersPage />
           : (
               <div>
+                <CustomCursor />
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<LoginPage />} />

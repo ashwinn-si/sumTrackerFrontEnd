@@ -1,0 +1,19 @@
+/* src/components/CustomCursor.css */
+
+.custom-cursor {
+    position: fixed;
+    width: 15px;
+    height: 15px;
+    background-color: #6b7280; /* Tailwind's gray-500 */
+    border: 2px solid #e5e7eb; /* Tailwind's gray-200 */
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, background-color 0.3s;
+}
+
+.custom-cursor.hovered {
+    background-color: #4b5563; /* Darker gray */
+    transform: scale(1.5); /* Slightly enlarge */
+}

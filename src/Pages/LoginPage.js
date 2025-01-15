@@ -107,7 +107,7 @@ function LoginPage() {
                     <div className="v-[100vw] flex justify-center items-center flex-col">
                         {loaderFlag ? <Loader/> : null}
                         <button
-                            className="m-2 py-2 px-4 border rounded border-border_primary text-text_primary hover:border-dotted hover:border-highlight_error transition-all duration-300"
+                            className="cursor-none m-2 py-2 px-4 border rounded border-border_primary text-text_primary hover:border-dotted hover:border-highlight_error transition-all duration-300"
                             type="submit"
                         >
                             Login
