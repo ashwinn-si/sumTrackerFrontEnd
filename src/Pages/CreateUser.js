@@ -17,7 +17,8 @@ function CreateUser() {
     const [verificationFlag, setVerificationFlag] = useState(false);
     const [generateOTPFlag, setGenerateOTPFlag] = useState(true);
     const navigate = useNavigate();
-    const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "https://sumtrackerbackend.onrender.com";
+    const API_URL = "https://sum-tracker-backend.vercel.app";
 
     const [toast, setToast] = useState({
         message: '',
