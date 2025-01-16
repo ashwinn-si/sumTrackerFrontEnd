@@ -17,7 +17,7 @@ function CreateUser() {
     const [verificationFlag, setVerificationFlag] = useState(false);
     const [generateOTPFlag, setGenerateOTPFlag] = useState(true);
     const navigate = useNavigate();
-    const API_URL = process.env.REACT_APP_backend_url;
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     const [toast, setToast] = useState({
         message: '',

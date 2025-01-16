@@ -29,7 +29,7 @@ function FolderPage(props) {
     const [noteData , setNoteData] = useState(null);
     const [noteFlag , setNoteFlag] = useState(false);
     const [noteHeader ,setNoteHeader] = useState("");
-    const API_URL = process.env.REACT_APP_backend_url;
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     function dataRetrieval() {
         setLoaderMessage("Getting data...");

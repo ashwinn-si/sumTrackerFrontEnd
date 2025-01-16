@@ -16,7 +16,7 @@ function LoginPage() {
     const passwordRef = useRef();
     const[loaderFlag, setLoaderFlag] = useState(false);
     const navigator = useNavigate();
-    const API_URL = process.env.REACT_APP_backend_url;
+    const API_URL = "https://sumtrackerbackend.onrender.com";
 
     const [toast, setToast] = useState({
         message: '',
