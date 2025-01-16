@@ -7,7 +7,7 @@ import Button from "../Components/Button";
 import TosterMessage from "../Components/TosterMessage";
 import EmailChecker from "../Scripts/EmailChecker";
 import Loader from "../Components/Loader";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 function ForgotPasswordPage() {
     const emailRef = useRef(null);
@@ -19,8 +19,7 @@ function ForgotPasswordPage() {
     const passRef = useRef(null);
     const navigate = useNavigate();
     const [count , setCount] = useState(0);
-    const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "http://localhost:5000";
+    const API_URL = process.env.REACT_APP_backend_url;
 
     const [toast, setToast] = useState({
         message: '',
@@ -161,7 +160,7 @@ function ForgotPasswordPage() {
             <TextTitle/>
             <SocialFooter/>
             <div
-                className="flex flex-col justify-evenly items-center w-[40vw]  min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded ">
+                className="flex flex-col justify-evenly items-center w-[40vw]  min-h-[20vw] bg-primary p-[1.5%]  border-solid  shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
                 <TextHeader props={{header: "Forgot Password"}}/>
                 <TosterMessage
                     content={toast.message}
@@ -197,6 +196,12 @@ function ForgotPasswordPage() {
                         </> : null
                 }
                 {loaderFlag ? <Loader/> : null}
+                <Link
+                    className="font-light text-text_primary hover:text-gray-500 transition-all duration-300"
+                    to="/"
+                >
+                    Already a User!
+                </Link>
             </div>
         </div>
     )

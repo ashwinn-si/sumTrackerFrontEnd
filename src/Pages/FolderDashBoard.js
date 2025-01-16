@@ -12,15 +12,14 @@ import LoaderPage from "../Components/LoaderPage";
 import Button from "../Components/Button";
 
 function FolderDashBoard() {
-    const { email } = useParams();
+    const email= atob(useParams().email);
     const [availableFolders, setAvailableFolders] = useState([]);
     const [folderCreatContainerFlag, setFolderCreatContainerFlag] = useState(false);
     const folderNameRef = useRef(null);
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [loaderMessage, setLoaderMessage] = useState("Deleting Folder");
     const navigate = useNavigate();
-    const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "http://localhost:5000";
+    const API_URL = process.env.REACT_APP_backend_url;
 
     function allFolderGetter() {
         setLoaderMessage("Getting all folders...");
@@ -46,8 +45,9 @@ function FolderDashBoard() {
         setLoaderFlag(false);
     }
 
-    
-    useEffect(() => {
+
+    useEffect( () => {
+        setLoaderFlag(true);
         if (email) {
             allFolderGetter();
         }
@@ -82,10 +82,27 @@ function FolderDashBoard() {
         setFolderCreatContainerFlag(true);
     }
 
-    function handleDeleteFolder(folderName) {
+    async function handleDeleteFolder(folderName) {
         const folder_name = folderName;
+        let dbID = [];
         setLoaderMessage("Deleting folder...");
         setLoaderFlag(true);
+        await fetch(`${API_URL}/${email}/${folderName}/image-details`, {
+            method: "POST",
+
+        }).then(res => {
+            return res.json();
+        }).then(data => {
+            console.log(data.data)
+            dbID = data.data;
+        })
+        for (const id of dbID) {
+            fetch(`${API_URL}/store-image/delete/${id}`, {
+                method: "DELETE",
+            }).then(res => {
+                return res.json();
+            })
+        }
         fetch(`${API_URL}/${email}/folder/delete`, {
             method: "DELETE",
             headers: {
@@ -105,7 +122,9 @@ function FolderDashBoard() {
     }
 
     function handleOpenFolder(folderName) {
-        navigate(`/${email}/${folderName}`);
+        const encodedEmail  = btoa(email)
+        const encodedFolderName = btoa(folderName)
+        navigate(`/${encodedEmail}/${encodedFolderName}`);
     }
 
     function backHelper() {
@@ -115,27 +134,34 @@ function FolderDashBoard() {
 
     return (
         <div className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex absolute flex-col">
-            <Header email={useParams().email}
-                backContext="Logout"
-                onClickHelper={backHelper} />
-            <TextHeader props={{ header: "Available Folders" }} />
+            <Header email={email}
+                    backContext="Logout"
+                    onClickHelper={backHelper}/>
+            <TextHeader props={{header: "Available Folders"}}/>
             {
-                folderCreatContainerFlag ? <AddFolderContainer props={{ folderGetter: getFolderName }} ref={folderNameRef} /> : null
+                folderCreatContainerFlag ?
+                    <AddFolderContainer props={{folderGetter: getFolderName}} ref={folderNameRef}/> : null
             }
             {
-                loaderFlag && <LoaderPage loadermessage={loaderMessage} />
+                loaderFlag && <LoaderPage loadermessage={loaderMessage}/>
             }
-            <div className="w-[95vw] p-3 mx-[2.5vw]  my-[1vw] flex justify-evenly border border-border_primary rounded flex-row flex-wrap">
+            <div
+                className="w-[95vw] p-3 mx-[2.5vw]  my-[1vw] flex justify-evenly  flex-row flex-wrap
+                shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
                 {
                     availableFolders.map((folder, index) => (
                         <div className="w-[22vw] flex justify-center items-center h-auto mb-5" key={index}>
-                            <FolderButton props={{ folderName: folder.FolderName, onDelete: handleDeleteFolder, onOpen: handleOpenFolder }} />
+                            <FolderButton props={{
+                                folderName: folder.FolderName,
+                                onDelete: handleDeleteFolder,
+                                onOpen: handleOpenFolder
+                            }}/>
                         </div>
                     ))
                 }
 
                 <div className="w-[22vw] flex justify-center items-center h-auto mb-2">
-                    <FolderAddButton props={{ folderName: "add Folder", onClick: handleAddFolder }} />
+                    <FolderAddButton props={{folderName: "add Folder", onClick: handleAddFolder}}/>
 
                 </div>
             </div>

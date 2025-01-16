@@ -13,7 +13,7 @@ const CustomCursor = () => {
 
         const handleHover = (e) => {
             const target = e.target;
-            if (target.tagName === "BUTTON" || target.tagName === "link" || target.tagName === "input") {
+            if (target.tagName === "BUTTON" || target.tagName === "link" || target.tagName === "InputBox" || target.tagName === "input") {
                 setHovered(true);
             } else {
                 setHovered(false);

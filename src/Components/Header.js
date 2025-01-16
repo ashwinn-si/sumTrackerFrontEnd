@@ -12,7 +12,7 @@ function Header({ email, backContext = "Back", onClickHelper }) {
 
 
     return(
-        <div className="w-[95vw] p-3 mx-[2.5vw] my-[1vw] flex justify-between items-center border border-border_primary rounded">
+        <div className="w-[95vw] p-3 mx-[2.5vw] my-[1vw] flex justify-between items-center  shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
             <div>
                     <button
                         className="text-l text-text_primary font-semibold flex items-center space-x-2 hover:translate-x-2 transition-transform"

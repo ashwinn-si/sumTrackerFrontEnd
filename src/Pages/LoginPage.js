@@ -16,8 +16,7 @@ function LoginPage() {
     const passwordRef = useRef();
     const[loaderFlag, setLoaderFlag] = useState(false);
     const navigator = useNavigate();
-    const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "http://localhost:5000";
+    const API_URL = process.env.REACT_APP_backend_url;
 
     const [toast, setToast] = useState({
         message: '',
@@ -55,16 +54,17 @@ function LoginPage() {
                         email,
                         password,
                     })
-                }).then(res => {
+                }).then(async res => {
                         setLoaderFlag(false);
                         if (res.status === 406) {
                             showToast("User Doesn't Exsist")
-                        }else if(res.status === 200){
+                        } else if (res.status === 200) {
                             showToast("Login  Successful!")
-                            navigator(`/${email}/folderdashboard`)
-                        }else if(res.status === 404){
+                            const encodedEmail = btoa(email)
+                            navigator(`/${encodedEmail}/folderdashboard`)
+                        } else if (res.status === 404) {
                             showToast("Password Incorrect");
-                        }else{
+                        } else {
                             showToast("Something went wrong!");
                         }
                     }
@@ -76,6 +76,7 @@ function LoginPage() {
 
         }else{
             showToast("Invalid Email");
+            setLoaderFlag(false);
         }
     }
 
@@ -85,7 +86,7 @@ function LoginPage() {
             <TextTitle/>
             <SocialFooter/>
             <div
-                className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded">
+                className="flex flex-col bg-primary justify-evenly items-center w-[40vw] h-[42vh] shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
                 <TextHeader props={{header: "Login"}}/>
 
                 <TosterMessage
@@ -107,7 +108,7 @@ function LoginPage() {
                     <div className="v-[100vw] flex justify-center items-center flex-col">
                         {loaderFlag ? <Loader/> : null}
                         <button
-                            className="cursor-none m-2 py-2 px-4 border rounded border-border_primary text-text_primary hover:border-dotted hover:border-highlight_error transition-all duration-300"
+                            className="cursor-none m-2 py-2 px-4 shadow-[rgba(50,_50,_105,_0.25)_0px_4px_10px_0px,_rgba(0,_0,_0,_0.1)_0px_2px_2px_0px] false rounded-md border border-zinc-600 text-text_primary hover:shadow-[rgba(50,_50,_105,_0.4)_0px_8px_20px_0px,_rgba(0,_0,_0,_0.2)_0px_4px_4px_0px]  hover:border-zinc-400 transition-all duration-300"
                             type="submit"
                         >
                             Login
@@ -118,14 +119,14 @@ function LoginPage() {
                 <div className="flex justify-between w-full px-4 mt-4 ">
                     <Link
                         to="/create"
-                        className="font-light text-text_primary hover:text-highlight_error transition-all duration-300 text-center w-full"
+                        className="font-light text-text_primary hover:text-gray-600 transition-all duration-300 text-center w-full"
                     >
                         New User ?
                     </Link>
 
                     <Link
                         to="/forgot-password"
-                        className="  font-light text-text_primary hover:text-highlight_error transition-all duration-300 text-center w-full"
+                        className="  font-light text-text_primary hover:text-gray-600 transition-all duration-300 text-center w-full"
                     >
                         Forgot Password !
                     </Link>

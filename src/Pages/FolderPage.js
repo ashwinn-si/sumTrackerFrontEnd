@@ -10,11 +10,14 @@ import LoaderPage from "../Components/LoaderPage";
 import SnippetContainer from "../Components/SnippetContainer";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import NotepadContainer from "../Components/NotepadContainer";
 
 function FolderPage(props) {
     const [AllRefs, setAllRefs] = useState([]);
     const [allQuestions, setAllQuestions] = useState([]);
-    const { email, folderName } = useParams();
+    const[imageDBID, setImageDBID] = useState([]);
+    const  email = atob(useParams().email);
+    const folderName = atob(useParams().folderName);
     const navigate = useNavigate();
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [snippetFlag ,setSnippetFlag] = useState(false);
@@ -22,12 +25,17 @@ function FolderPage(props) {
     const [loaderMessage,setLoaderMessage] = useState("");
     const [snippetData ,setSnippetData] = useState(null);
     const [snippetOpenIndex , setSnippetOpenIndex] = useState(0);
-    const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "http://localhost:5000";
+    const [noteIndex , setNoteIndex] = useState(0);
+    const [noteData , setNoteData] = useState(null);
+    const [noteFlag , setNoteFlag] = useState(false);
+    const [noteHeader ,setNoteHeader] = useState("");
+    const API_URL = process.env.REACT_APP_backend_url;
+
     function dataRetrieval() {
         setLoaderMessage("Getting data...");
         setLoaderFlag(true);  // Start loading indicator
         setAllRefs([]);
+        setImageDBID([])
         fetch(`${API_URL}/${email}/${folderName}`, {
             method: "GET",
             headers: {
@@ -38,6 +46,11 @@ function FolderPage(props) {
         }).then((data) => {
             setAllRefs(data.map(() => React.createRef())); // Create refs dynamically based on fetched data
             setAllQuestions(data);
+            setImageDBID(
+                data.map((items)=>{
+                    return items.Snippet.image
+                })
+            )
 
             setLoaderFlag(false);  // Hide loading indicator after data is fetched
         }).catch(() => {
@@ -51,7 +64,8 @@ function FolderPage(props) {
             return [...prevState, newRef];
         });
         setAllQuestions(prevState => [...prevState, {
-            Snippet : {code : "", img : ""}
+            Snippet : {code : "", image : ""},
+            Note : ""
         }]);
     }
 
@@ -67,12 +81,28 @@ function FolderPage(props) {
 
         const filteredData = allData.filter(item => item !== null);
         const filterQuestionData = allQuestions.filter(item => item !== null);
-
         filteredData.map((item,index) => {
             item.Snippet = filterQuestionData[index].Snippet;
+            item.Note = filterQuestionData[index].Note;
         })
+
+        const filterDBID = filterQuestionData.map(items =>{
+            return items.Snippet.image
+        })
+
         setLoaderMessage("Saving data...");
         setLoaderFlag(true);  // Start loading indicator
+        //deleting the unnesscary images in db
+        for(const id of imageDBID){
+            if(!filterDBID.includes(id)){
+                fetch(`${API_URL}/store-image/delete/${id}`, {
+                    method: "DELETE",
+                }).then(res =>{
+                    return res.json();
+                })
+            }
+        }
+
         fetch(`${API_URL}/${email}/${folderName}/update`, {
             headers: {
                 'Content-Type': 'application/json'
@@ -91,7 +121,8 @@ function FolderPage(props) {
 
     async function backHelper() {
         await saveQuestionHelper();
-        navigate(`/${email}/folderdashboard`);
+        const encodedEmail = btoa(email)
+        navigate(`/${encodedEmail}/folderdashboard`);
     }
 
     function handleDeleteQuestionHelper(targetIndex) {
@@ -114,6 +145,21 @@ function FolderPage(props) {
 
     }
 
+    function handleNotepad(targetIndex){
+        const questionData = AllRefs[targetIndex].current.getData();
+        const questionName = questionData.QuestionName;
+        const note = allQuestions[targetIndex].Note || "";
+        setNoteIndex(targetIndex)
+        setNoteData(note)
+        setNoteHeader(questionName)
+        setNoteFlag(true);
+    }
+
+    function handleNotepadClose(targetIndex,note){
+        setNoteFlag(false);
+        allQuestions[targetIndex].Note = note;
+    }
+
     async function handleOpenSnippetHelper(targetIndex) {
         const questionData = AllRefs[targetIndex].current.getData();
         const questionName = questionData.QuestionName;
@@ -124,9 +170,37 @@ function FolderPage(props) {
         setSnippetFlag(true);
     }
 
-    function snippetClose(code,targetIndex){
-        setSnippetFlag(false);
+
+    function snippetClose(code,targetIndex,img,uploadFlag,prevDBID){
+        if(uploadFlag){
+            //if uploadflag is true and there already exsist a img in db and a new img is uploaded then we need to delete the previous image and create a new image | else create a new image
+            if(prevDBID){
+                //deleting the previously exsisting image in db and storing a new image
+                fetch(`${API_URL}/store-image/delete/${prevDBID}`, {
+                    method: "DELETE",
+                }).then(res =>{
+                    return res.json();
+                })
+            }
+            if(img){
+                const formData = new FormData();
+                formData.append("image",img);
+                fetch(`${API_URL}/store-image`, {
+                    method: "POST",
+                    body: formData
+                }).then(res =>{
+                    return res.json();
+                }).then(data =>{
+                    allQuestions[targetIndex].Snippet.image = data.message
+                    setImageDBID(prevDBID =>{
+                        return [...prevDBID,data.message];
+                    });
+                })
+            }
+
+        }
         allQuestions[targetIndex].Snippet.code = code;
+        setSnippetFlag(false);
     }
 
     useEffect(() => {
@@ -145,8 +219,11 @@ function FolderPage(props) {
     }
     //function to generate excel
     async function generateExcel() {
+        // Await helper functions
         await saveQuestionHelper();
         await dataRetrieval();
+
+        // Prepare data for the worksheet
         const excelData = [];
         for (const item of allQuestions) {
             excelData.push([
@@ -160,55 +237,21 @@ function FolderPage(props) {
             ]);
         }
 
-        // Create workbook and worksheet
+        // Create workbook and add data with column headings
         const workbook = XLSX.utils.book_new();
         const colHeadings = [["Created Date", "Date", "Problem Number", "Problem Name", "Type", "Status", "Revise"]];
-
-        // Create worksheet with the data
         const workSheetData = XLSX.utils.aoa_to_sheet([...colHeadings, ...excelData]);
 
-        // Define styles
-        const headerStyle = {
-            font: {
-                bold: true,
-                color: { rgb: "FFFFFF" }
-            },
-            alignment: {
-                horizontal: "center",
-                vertical: "center",
-                wrapText: true  // Enable text wrapping
-            }
-        };
-
-        const dataStyle = {
-            alignment: {
-                horizontal: "center",
-                vertical: "center",
-                wrapText: true
-            },
-            border: {  // Added borders for better visibility
-                top: { style: "thin" },
-                bottom: { style: "thin" },
-                left: { style: "thin" },
-                right: { style: "thin" }
-            }
-        };
-
-        // Apply styles
-        const range = XLSX.utils.decode_range(workSheetData['!ref']);
-        for (let R = range.s.r; R <= range.e.r; R++) {
-            for (let C = range.s.c; C <= range.e.c; C++) {
-                const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-                if (R === 0) {  // Header row
-                    workSheetData[cellAddress].s = headerStyle;
-                } else {  // Data rows
-                    workSheetData[cellAddress].s = dataStyle;
-                }
-            }
+        // Ensure the worksheet reference is defined
+        if (!workSheetData["!ref"]) {
+            workSheetData["!ref"] = XLSX.utils.encode_range({
+                s: { r: 0, c: 0 },
+                e: { r: excelData.length, c: colHeadings[0].length - 1 }
+            });
         }
 
-        // Set column widths
-        workSheetData['!cols'] = [
+        // Set column widths for better readability
+        workSheetData["!cols"] = [
             { wch: 20 }, // Created Date
             { wch: 20 }, // Date
             { wch: 20 }, // Problem Number
@@ -218,17 +261,16 @@ function FolderPage(props) {
             { wch: 15 }  // Revise
         ];
 
-        // Freeze first row
-        workSheetData['!freeze'] = { xSplit: 0, ySplit: 1 };
+        // Freeze the first row
+        workSheetData["!freeze"] = { xSplit: 0, ySplit: 1 };
 
         // Append worksheet to workbook
-        XLSX.utils.book_append_sheet(workbook, workSheetData, folderName);
+        XLSX.utils.book_append_sheet(workbook, workSheetData, "Questions");
 
-        // Generate and save file
+        // Generate and save the Excel file
         const excelBuffer = XLSX.write(workbook, {
             bookType: "xlsx",
-            type: "array",
-            cellStyles: true  // Enable cell styles
+            type: "array"
         });
 
         const dataBlob = new Blob([excelBuffer], {
@@ -237,15 +279,19 @@ function FolderPage(props) {
 
         saveAs(dataBlob, `${folderName}.xlsx`);
     }
+
     return (
         <div className="font-Montserrat bg-netural w-[100vw] min-h-[100vh] flex absolute flex-col">
             <Header email={email} backContext="Back" onClickHelper={backHelper} />
             <TextHeader props={{ header: folderName }} />
             <FolderHeader />
             {
-                snippetFlag ? < SnippetContainer props={{header : snippetHeader , close:snippetClose , snippetData , index : snippetOpenIndex}}/> : null
+                snippetFlag ? < SnippetContainer props={{header : snippetHeader , close:snippetClose , snippetData , index : snippetOpenIndex, folderName : btoa(folderName),email : btoa(email)}}/> : null
             }
-            <div className="overflow-y-auto w-[95vw] p-3 mx-[2.5vw] my-[1vw] flex justify-evenly items-center border border-border_primary rounded text-center flex-col">
+            {
+                noteFlag && <NotepadContainer props={{header : noteHeader , close : handleNotepadClose , index : noteIndex , note : noteData}}/>
+            }
+            <div className="overflow-y-auto w-[95vw] p-3 mx-[2.5vw] my-[1vw] flex justify-evenly items-center text-center flex-col shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
                 {
                     allQuestions.map((item, index) => {
                         if (item && AllRefs[index] !== null) {
@@ -259,9 +305,11 @@ function FolderPage(props) {
                                         Type: item.Type || "easy",
                                         Status: item.Status || false,
                                         Revise: item.Revise || false,
+                                        Note : item.Note || "",
                                         index,
                                         handleDelete: handleDeleteQuestionHelper,
-                                        handleSnipper : handleOpenSnippetHelper
+                                        handleSnipper : handleOpenSnippetHelper,
+                                        handleNotepad : handleNotepad
                                     }}
                                     ref={AllRefs[index] || null}
                                 />

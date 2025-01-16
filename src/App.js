@@ -8,10 +8,10 @@ import {useEffect, useState} from "react";
 import MobileUsersPage from "./Pages/MobileUsersPage";
 import ForgotPasswordPage from "./Pages/ForgotPasswordPage";
 import CustomCursor from "./Components/CustomCursor";
+import ImageDisplayPage from "./Pages/ImageDisplayPage";
 
 function App() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -37,6 +37,7 @@ function App() {
                     <Route path="/:email/folderdashboard" element={<FolderDashBoard />} />
                     <Route path="/:email/:folderName" element={<FolderPage />} />
                     <Route path="/forgot-password" element ={<ForgotPasswordPage />} />
+                      <Route path="/:email/:folderName/image-display" element={<ImageDisplayPage />} />
                   </Routes>
                 </BrowserRouter>
               </div>

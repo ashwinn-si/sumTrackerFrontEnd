@@ -17,8 +17,7 @@ function CreateUser() {
     const [verificationFlag, setVerificationFlag] = useState(false);
     const [generateOTPFlag, setGenerateOTPFlag] = useState(true);
     const navigate = useNavigate();
-    const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "http://localhost:5000";
+    const API_URL = process.env.REACT_APP_backend_url;
 
     const [toast, setToast] = useState({
         message: '',
@@ -151,7 +150,8 @@ function CreateUser() {
         <div className="font-Montserrat bg-netural w-[100vw] h-[100vh] flex justify-center items-center absolute flex-col">
             <TextTitle />
             <SocialFooter />
-            <div className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%] border-border_primary border-solid border rounded">
+            <div className="flex flex-col justify-evenly items-center w-[40vw] min-h-[20vw] bg-primary p-[1.5%]  border-solid
+            shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
                 <TextHeader props={{ header: "Create User" }} />
                 <TosterMessage
                     content={toast.message}
@@ -176,7 +176,7 @@ function CreateUser() {
                 )}
                 {loaderFlag && <Loader />}
                 <Link
-                    className="font-light text-text_primary hover:text-highlight_error transition-all duration-300"
+                    className="font-light text-text_primary hover:text-gray-500 transition-all duration-300"
                     to="/"
                 >
                     Already a User!

@@ -6,6 +6,7 @@ import DropDownBox from "./DropDownBox";
 import FolderInputBox from "./FolderInputBox";
 import bin from "../Assests/Images/bin.png"
 import snippet from "../Assests/Images/snippet.png"
+import notepad from "../Assests/Images/notepad.png"
 
 const FolderPageRow  = forwardRef((props,ref) => {
     const defaultValue = props.props;
@@ -41,6 +42,10 @@ const FolderPageRow  = forwardRef((props,ref) => {
             defaultValue.handleDelete(defaultValue.index);
     }
 
+    function handleOpenNotepad(){
+        defaultValue.handleNotepad(defaultValue.index);
+    }
+
     function handleSnippet(){
         defaultValue.handleSnipper(defaultValue.index);
     }
@@ -48,12 +53,14 @@ const FolderPageRow  = forwardRef((props,ref) => {
     return (
         <div className="w-full p-3  flex justify-evenly items-center">
             <div className="w-[5vw]">
-                <button className=" text-l font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000]" onClick={handleDeleteQuestionHelper}> <img  src={bin} /></button>
+                <button
+                    className=" text-l font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000]"
+                    onClick={handleDeleteQuestionHelper}><img src={bin}/></button>
             </div>
             <div className="w-[10vw]">
                 <input type={"date"}
                        value={date || ""}
-                       className="w-[95%] p-[2%]  border border-border_primary bg-transparent text-center text-text_secondary  hover:border-dotted transition-all duration-300 rounded"
+                       className="w-[95%] p-[2%]   bg-transparent text-center text-text_secondary  transition-all duration-300 shadow-[rgba(50,_50,_105,_0.4)_0px_8px_20px_0px,_rgba(0,_0,_0,_0.2)_0px_4px_4px_0px] false rounded-md border border-zinc-800"
                        onChange={handleDateChange}/>
             </div>
             <div className="w-[24vw]">
@@ -64,7 +71,12 @@ const FolderPageRow  = forwardRef((props,ref) => {
                 <FolderInputBox props={{placeholder: "Problem Name", type: "text", value: defaultValue.QuestionName}}
                                 ref={Refs.QuestionName}/>
             </div>
-            <div className="w-[16vw]">
+            <div className="w-[5vw]">
+                <button
+                    className=" font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000] pt-3"
+                    onClick={handleOpenNotepad}><img src={notepad}/></button>
+            </div>
+            <div className="w-[11vw]">
                 <DropDownBox props={{type: "hard", value: defaultValue.Type}} ref={Refs.Type}/>
             </div>
             <div className="w-[10vw] flex justify-center items-center">

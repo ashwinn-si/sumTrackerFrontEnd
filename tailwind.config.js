@@ -9,11 +9,11 @@ module.exports = {
         "Montserrat" :['Montserrat']
       },
       colors:{
-        netural : "#121212",
-        primary : "#0f0f13",
+        netural : "#111111",
+        primary : "#191919",
         secondary : "#23232E",
-        text_primary : "#E0E0E0",
-        text_secondary: "#B0B0B0",
+        text_primary : "#D4D4D8",
+        text_secondary: "#C5D7C5",
         border_primary : "#ffffff",
         highlight_red : "#FF5252",
         highlight_blue : "#29B6F6",
