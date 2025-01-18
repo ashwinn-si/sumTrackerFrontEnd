@@ -17,8 +17,9 @@ function CreateUser() {
     const [verificationFlag, setVerificationFlag] = useState(false);
     const [generateOTPFlag, setGenerateOTPFlag] = useState(true);
     const navigate = useNavigate();
+    const [createUserFlag , setCreateUserFlag] = useState(true);
     const API_URL = "https://sumtrackerbackend.onrender.com";
-    // const API_URL = "https://sum-tracker-backend.vercel.app";
+    // const API_URL = "https://localhost:5000";
 
     const [toast, setToast] = useState({
         message: '',
@@ -40,7 +41,6 @@ function CreateUser() {
     async function handleGenerateOTP() {
         const email = emailRef.current.getData();
         const password = passwordRef.current.getData();
-
         if (!EmailChecker(email)) {
             showToast("Invalid Email");
             return;
@@ -130,6 +130,7 @@ function CreateUser() {
             });
 
             if (response.status === 200) {
+                setCreateUserFlag(false)
                 showToast("Account created successfully!");
                 setTimeout(() => {
                     showToast("Navigating to Login");
@@ -162,7 +163,8 @@ function CreateUser() {
                 <InputBox props={{ placeholder: "Email Address", type: "email" ,autoComplete: "email"}} ref={emailRef} />
                 <InputBox props={{ placeholder: "Password", type: "text",autoComplete: "password" }} ref={passwordRef} />
                 {verificationFlag ? (
-                    <Button props={{ content: "Create User", onClick: handleCreate }} />
+                    createUserFlag ?
+                        <Button props={{ content: "Create User", onClick: handleCreate }} /> : null
                 ) : (
                     <>
                         {generateOTPFlag ? (
@@ -176,12 +178,15 @@ function CreateUser() {
                     </>
                 )}
                 {loaderFlag && <Loader />}
-                <Link
-                    className="font-light text-text_primary hover:text-gray-500 transition-all duration-300"
-                    to="/"
-                >
-                    Already a User!
-                </Link>
+                {
+                    createUserFlag ? <Link
+                        className="font-light text-text_primary hover:text-gray-500 transition-all duration-300"
+                        to="/"
+                    >
+                        Already a User!
+                    </Link> : null
+                }
+
             </div>
         </div>
     );

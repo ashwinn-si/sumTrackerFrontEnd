@@ -15,6 +15,8 @@ function LoginPage() {
     const emailRef = useRef();
     const passwordRef = useRef();
     const[loaderFlag, setLoaderFlag] = useState(false);
+    const[userEmail,setEmail] = useState("");
+    const[userPassword,setPassword] = useState("");
     const navigator = useNavigate();
     const API_URL = "https://sumtrackerbackend.onrender.com";
     // const API_URL = "https://sum-tracker-backend.vercel.app";
@@ -37,12 +39,19 @@ function LoginPage() {
         }));
     };
 
+    function changeEmailHandler(e){
+        setEmail(e.target.value);
+    }
+
+    function changePasswordHandler(e){
+        setPassword(e.target.value);
+    }
 
 
     function onLoginClick(e) {
         e.preventDefault();
-        const email = emailRef.current.getData();
-        const password = passwordRef.current.getData();
+        const email = userEmail;
+        const password = userPassword;
         setLoaderFlag(true);
         if(EmailChecker(email)) {
 
@@ -97,14 +106,22 @@ function LoginPage() {
                     onHide={hideToast}
                 />
 
-                <form onSubmit={onLoginClick}>
-                    <InputBox
-                        props={{placeholder: "Email Address", type: "email", required: true, autoComplete: "email"}}
-                        ref={emailRef}
+                <form onSubmit={onLoginClick} autoComplete="on" className="flex flex-col justify-evenly items-center">
+                    <input
+                        placeholder="Email Address"
+                        onChange={changeEmailHandler}
+                        type="email"
+                        autoComplete="email"
+                        required
+                        className="m-3 p-2 px-4 bg-transparent text-left shadow-[rgba(50,_50,_105,_0.25)_0px_4px_10px_0px,_rgba(0,_0,_0,_0.1)_0px_2px_2px_0px] false rounded-md border border-zinc-600 text-text_secondary  hover:border-dotted transition-all duration-300 "
                     />
-                    <InputBox
-                        props={{placeholder: "Password", type: "text", required: true, autoComplete: "password"}}
-                        ref={passwordRef}
+                    <input
+                        placeholder="Password"
+                        onChange={changePasswordHandler}
+                        type="password"
+                        autoComplete="password"
+                        required
+                        className="m-3 p-2 px-4  bg-transparent text-left shadow-[rgba(50,_50,_105,_0.25)_0px_4px_10px_0px,_rgba(0,_0,_0,_0.1)_0px_2px_2px_0px] false rounded-md border border-zinc-600 text-text_secondary  hover:border-dotted transition-all duration-300 "
                     />
 
                     <div className="v-[100vw] flex justify-center items-center flex-col">
