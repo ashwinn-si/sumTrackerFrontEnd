@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../Components/Loader";
 import LoaderPage from "../Components/LoaderPage";
 import Button from "../Components/Button";
+import DeleteFolderContainer from "../Components/DeleteFolderContainer";
 
 function FolderDashBoard() {
     const email= atob(useParams().email);
@@ -17,6 +18,8 @@ function FolderDashBoard() {
     const [folderCreatContainerFlag, setFolderCreatContainerFlag] = useState(false);
     const folderNameRef = useRef(null);
     const [loaderFlag, setLoaderFlag] = useState(false);
+    const [DelfolderName, setFolderName] = useState("");
+    const [openDeleteFlag ,setOpenDeleteFlag] = useState(false);
     const [loaderMessage, setLoaderMessage] = useState("Deleting Folder");
     const navigate = useNavigate();
     const API_URL = "https://sumtrackerbackend.onrender.com";
@@ -83,13 +86,20 @@ function FolderDashBoard() {
     function handleAddFolder() {
         setFolderCreatContainerFlag(true);
     }
+    function closeDeleteFolder() {
+        setOpenDeleteFlag(false);
+    }
+    async function openDeleteFolder(folderName) {
+        setFolderName(folderName);
+        setOpenDeleteFlag(true);
+    }
 
-    async function handleDeleteFolder(folderName) {
-        const folder_name = folderName;
+    async function handleDeleteFolder() {
+        const folder_name = DelfolderName;
         let dbID = [];
         setLoaderMessage("Deleting folder...");
         setLoaderFlag(true);
-        await fetch(`${API_URL}/${email}/${folderName}/image-details`, {
+        await fetch(`${API_URL}/${email}/${folder_name}/image-details`, {
             method: "POST",
 
         }).then(res => {
@@ -117,10 +127,14 @@ function FolderDashBoard() {
             if (res.ok) {
                 setLoaderFlag(false);
                 allFolderGetter();
+                setOpenDeleteFlag(false);
             } else {
+                setOpenDeleteFlag(false);
                 setLoaderFlag(false);
             }
         })
+        setOpenDeleteFlag(false);
+
     }
 
     function handleOpenFolder(folderName) {
@@ -145,6 +159,9 @@ function FolderDashBoard() {
                     <AddFolderContainer props={{folderGetter: getFolderName}} ref={folderNameRef}/> : null
             }
             {
+                openDeleteFlag ? <DeleteFolderContainer props={{handleDelete : handleDeleteFolder , handleClose : closeDeleteFolder}}/> : null
+            }
+            {
                 loaderFlag && <LoaderPage loadermessage={loaderMessage}/>
             }
             <div
@@ -155,7 +172,7 @@ function FolderDashBoard() {
                         <div className="w-[22vw] flex justify-center items-center h-auto mb-5" key={index}>
                             <FolderButton props={{
                                 folderName: folder.FolderName,
-                                onDelete: handleDeleteFolder,
+                                onDelete: openDeleteFolder,
                                 onOpen: handleOpenFolder
                             }}/>
                         </div>

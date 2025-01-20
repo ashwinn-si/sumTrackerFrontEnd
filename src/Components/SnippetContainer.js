@@ -74,22 +74,22 @@ function SnippetContainer(props) {
         window.open(`/${props.props.email}/${props.props.folderName}/image-display`, '_blank');
     }
 
-    useEffect(() => {
-        if(image.length > 0){
-            setPrevDbID(image);
-            fetch(`${API_URL}/store-image/${image}`,{
-                method: "POST"
-            }).then(res =>{
-                return res.json();
-            }).then(data =>{
+    // useEffect(() => {
+    //     if(image.length > 0){
+    //         setPrevDbID(image);
+    //         fetch(`${API_URL}/store-image/${image}`,{
+    //             method: "POST"
+    //         }).then(res =>{
+    //             return res.json();
+    //         }).then(data =>{
 
-                const imageType = 'image/png'; // Replace with the appropriate type, e.g., 'image/jpeg'
-                setImage(data.image) //data.image is in form of base 64
-                setImageToDisplay(`data:${imageType};base64,${data.image}`); //setting as data.image as base64
-            })
-            setImageDisplay(true);
-        }
-    },[])
+    //             const imageType = 'image/png'; // Replace with the appropriate type, e.g., 'image/jpeg'
+    //             setImage(data.image) //data.image is in form of base 64
+    //             setImageToDisplay(`data:${imageType};base64,${data.image}`); //setting as data.image as base64
+    //         })
+    //         setImageDisplay(true);
+    //     }
+    // },[])
 
     return (
         <div
@@ -102,10 +102,10 @@ function SnippetContainer(props) {
             <div
                 className="flex flex-col justify-evenly items-center w-[60vw] h-[70vh] bg-netural p-[1.5%]  border-solid shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
                 <TextHeader props={{header: props.props.header}}/>
-                <TextSubHeader props={{header: "Image"}}/>
-                <div className="flex flex-row">
-                    <div className="relative">
-                        <input
+                {/* <TextSubHeader props={{header: "Image"}}/> */}
+                 <div className="flex flex-row">
+                    {/* <div className="relative"> */} 
+                        {/* <input
                             type="file"
                             accept=".jpg, .png"
                             onChange={handleFileUpload}
@@ -118,21 +118,21 @@ function SnippetContainer(props) {
                             className="inline-block mb-1 py-1 px-2 border rounded-lg  border-gray-700 text-white font-semibold hover:border-gray-400 focus:outline-none focus:ring-2  hover:text-gray-100 transition duration-300 ease-in-out"
                         >
                             Upload File
-                        </label>
-                    </div>
+                        </label> */}
+                    {/* </div>
                     {
                         imageDisplay ?
                             <button className= "cursor-none ml-2 inline-block mb-1 py-1 px-2 border rounded-lg border-gray-700 text-white font-semibold hover:border-gray-400 focus:outline-none focus:ring-2  hover:text-gray-100 transition duration-300 ease-in-out" onClick={handleView}> View</button>
                             : null
-                    }
+                    } */}
 
                 </div>
 
-                {
+                {/* {
                     imageDisplay && (
                         <img src={imageToDisplay} alt="uploaded image" className="w-[30%] mb-2"/>
                     )
-                }
+                } */}
 
                 <TextSubHeader props={{header: "Code"}}/>
                 <textarea
@@ -147,8 +147,6 @@ function SnippetContainer(props) {
                 </div>
             </div>
         </div>
-
-
     )
 }
 
