@@ -11,6 +11,7 @@ import SnippetContainer from "../Components/SnippetContainer";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import NotepadContainer from "../Components/NotepadContainer";
+import DataSorter from "../Scripts/DataSorter";
 
 function FolderPage(props) {
     const [AllRefs, setAllRefs] = useState([]);
@@ -47,7 +48,7 @@ function FolderPage(props) {
             return res.json();
         }).then((data) => {
             setAllRefs(data.map(() => React.createRef())); // Create refs dynamically based on fetched data
-            setAllQuestions(data);
+            setAllQuestions(DataSorter(data));
             setImageDBID(
                 data.map((items)=>{
                     return items.Snippet.image
@@ -59,7 +60,7 @@ function FolderPage(props) {
             setLoaderFlag(false); // Hide loading indicator if error occurs
         });
     }
-
+    
     function addQuestionHelper() {
         setAllRefs((prevState) => {
             const newRef = React.createRef();
