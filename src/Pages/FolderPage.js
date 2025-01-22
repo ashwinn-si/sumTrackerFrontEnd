@@ -210,6 +210,7 @@ function FolderPage(props) {
         }
     }, [email, folderName]);
 
+
     function formateDate(isoString) {
         const date = new Date(isoString);
         const day = String(date.getDate()).padStart(2, '0'); // Ensure 2 digits
