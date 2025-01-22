@@ -7,6 +7,8 @@ import FolderInputBox from "./FolderInputBox";
 import bin from "../Assests/Images/bin.png"
 import snippet from "../Assests/Images/snippet.png"
 import notepad from "../Assests/Images/notepad.png"
+import notepadContains from "../Assests/Images/notepad-added.png"
+import snippetContains from "../Assests/Images/snippetContains.png"
 
 const FolderPageRow  = forwardRef((props,ref) => {
     const defaultValue = props.props;
@@ -44,6 +46,7 @@ const FolderPageRow  = forwardRef((props,ref) => {
 
     function handleOpenNotepad(){
         defaultValue.handleNotepad(defaultValue.index);
+
     }
 
     function handleSnippet(){
@@ -72,9 +75,14 @@ const FolderPageRow  = forwardRef((props,ref) => {
                                 ref={Refs.QuestionName}/>
             </div>
             <div className="w-[5vw]">
-                <button
-                    className=" font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000] pt-3"
-                    onClick={handleOpenNotepad}><img src={notepad}/></button>
+                {
+                    props.props.notepadContainsFlag ?  <button
+                        className=" font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000] pt-3"
+                        onClick={handleOpenNotepad}><img src={notepadContains}/></button> : <button
+                        className=" font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000] pt-3"
+                        onClick={handleOpenNotepad}><img src={notepad}/></button>
+                }
+
             </div>
             <div className="w-[11vw]">
                 <DropDownBox props={{type: "hard", value: defaultValue.Type}} ref={Refs.Type}/>
@@ -86,9 +94,15 @@ const FolderPageRow  = forwardRef((props,ref) => {
                 <ReviseStar props={{status: false, value: defaultValue.Revise}} ref={Refs.revise}/>
             </div>
             <div className="w-[5vw]">
-                <button
-                    className=" font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000] pt-3"
-                    onClick={handleSnippet}><img src={snippet}/></button>
+                {
+                    props.props.snippetContainsFlag ? <button
+                        className=" font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000] pt-3"
+                        onClick={handleSnippet}><img src={snippetContains}/></button>
+                        :
+                        <button
+                            className=" font-semibold text-highlight_green hover:translate-y-[-5px] transition-all duration-[3000] pt-3"
+                            onClick={handleSnippet}><img src={snippet}/></button>
+                }
             </div>
         </div>
     )

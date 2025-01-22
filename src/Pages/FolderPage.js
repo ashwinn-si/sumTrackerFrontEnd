@@ -204,7 +204,6 @@ function FolderPage(props) {
         allQuestions[targetIndex].Snippet.code = code;
         setSnippetFlag(false);
     }
-
     useEffect(() => {
         if (email && folderName) {
             dataRetrieval();
@@ -311,7 +310,9 @@ function FolderPage(props) {
                                         index,
                                         handleDelete: handleDeleteQuestionHelper,
                                         handleSnipper : handleOpenSnippetHelper,
-                                        handleNotepad : handleNotepad
+                                        handleNotepad : handleNotepad,
+                                        notepadContainsFlag : item.Note.length > 0 ? true : false,
+                                        snippetContainsFlag : item.Snippet.code.length > 0 ? true : false,
                                     }}
                                     ref={AllRefs[index] || null}
                                 />
