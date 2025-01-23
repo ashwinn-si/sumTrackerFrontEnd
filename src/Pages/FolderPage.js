@@ -230,7 +230,6 @@ function FolderPage(props) {
         const excelData = [];
         for (const item of allQuestions) {
             excelData.push([
-                formateDate(item.CreateDate),
                 formateDate(item.Date),
                 item.QuestionNumber,
                 item.QuestionName,
@@ -242,7 +241,7 @@ function FolderPage(props) {
 
         // Create workbook and add data with column headings
         const workbook = XLSX.utils.book_new();
-        const colHeadings = [["Created Date", "Date", "Problem Number", "Problem Name", "Type", "Status", "Revise"]];
+        const colHeadings = [["Date", "Problem Number", "Problem Name", "Type", "Status", "Revise"]];
         const workSheetData = XLSX.utils.aoa_to_sheet([...colHeadings, ...excelData]);
 
         // Ensure the worksheet reference is defined
@@ -255,7 +254,6 @@ function FolderPage(props) {
 
         // Set column widths for better readability
         workSheetData["!cols"] = [
-            { wch: 20 }, // Created Date
             { wch: 20 }, // Date
             { wch: 20 }, // Problem Number
             { wch: 25 }, // Problem Name

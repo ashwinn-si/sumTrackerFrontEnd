@@ -4,19 +4,19 @@ import React, {useEffect, useState} from "react";
 import TextSubHeader from "./TextSubHeader";
 import TosterMessage from "./TosterMessage";
 import {useNavigate} from "react-router-dom";
-import imageCompression from 'browser-image-compression';
-import {Buffer} from "buffer";
 
 function SnippetContainer(props) {
     const [userCode , setUserCode] = useState(props.props.snippetData.code);
     const [image , setImage] = useState(props.props.snippetData.image);
     const [imageDisplay, setImageDisplay] = useState(false);
     const [prevDbID, setPrevDbID] = useState(null);
+    const email = atob(props.props.email);
     const [uploadFlag , setUploadFlag] = useState(false);
+    const [imageFlag , setImageFlag] = useState(false);
     const navigate = useNavigate();
     const [imageToDisplay, setImageToDisplay] = useState(null);
-    // const API_URL = "https://sumtrackerbackend.onrender.com";
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://sumtrackerbackend.onrender.com";
+    // const API_URL = "http://localhost:5000";
 
     const [toast, setToast] = useState({
         message: '',
@@ -25,7 +25,7 @@ function SnippetContainer(props) {
 
     const showToast = (message) => {
         setToast({ message, isVisible: true });
-        setTimeout(hideToast, 2000); // Automatically hides after 2 seconds
+        setTimeout(hideToast, 2000);
     };
 
     const hideToast = () => {
@@ -38,16 +38,16 @@ function SnippetContainer(props) {
     function handleCodeChange(e) {
         setUserCode(e.target.value);
     }
+
     function handleClose(){
         showToast("Saving Data")
         props.props.close(userCode,props.props.index,image,uploadFlag,prevDbID)
     }
+
     function handleCopy(){
         navigator.clipboard.writeText(userCode)
         showToast("Code Copied!!")
     }
-
-    //functions for image handling
 
     const convertImageToBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -62,34 +62,47 @@ function SnippetContainer(props) {
         setUploadFlag(true);
         showToast("Image Uploaded");
         const file = e.target.files[0];
-        setImageToDisplay(await convertImageToBase64(file));
+        const base64Image = await convertImageToBase64(file);
+        setImageToDisplay(base64Image);
         setImage(file);
         setImageDisplay(true)
     }
 
     async function handleView() {
         localStorage.clear();
-        // const imageURL = await convertImageToBase64(image);
+
+        // Check if image is a File/Blob before trying to convert
+        if (image instanceof File || image instanceof Blob) {
+            await convertImageToBase64(image);
+        }
+
+        // Always use imageToDisplay for localStorage and opening new window
         localStorage.setItem("imageURL", JSON.stringify(imageToDisplay));
         window.open(`/${props.props.email}/${props.props.folderName}/image-display`, '_blank');
     }
 
-    // useEffect(() => {
-    //     if(image.length > 0){
-    //         setPrevDbID(image);
-    //         fetch(`${API_URL}/store-image/${image}`,{
-    //             method: "POST"
-    //         }).then(res =>{
-    //             return res.json();
-    //         }).then(data =>{
+    useEffect(() => {
+        if((email) === "siashwin2005@gmail.com"){
+            setImageFlag(true);
+        }
 
-    //             const imageType = 'image/png'; // Replace with the appropriate type, e.g., 'image/jpeg'
-    //             setImage(data.image) //data.image is in form of base 64
-    //             setImageToDisplay(`data:${imageType};base64,${data.image}`); //setting as data.image as base64
-    //         })
-    //         setImageDisplay(true);
-    //     }
-    // },[])
+        },[email])
+
+    useEffect(() => {
+        if(imageFlag && image && image.length > 0){
+            setPrevDbID(image);
+            fetch(`${API_URL}/store-image/${image}`,{
+                method: "POST"
+            }).then(res =>{
+                return res.json();
+            }).then(data =>{
+                const imageType = 'image/png';
+                setImage(data.image)
+                setImageToDisplay(`data:${imageType};base64,${data.image}`);
+            })
+            setImageDisplay(true);
+        }
+    },[])
 
     return (
         <div
@@ -102,37 +115,40 @@ function SnippetContainer(props) {
             <div
                 className="flex flex-col justify-evenly items-center w-[60vw] h-[70vh] bg-netural p-[1.5%]  border-solid shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
                 <TextHeader props={{header: props.props.header}}/>
-                {/* <TextSubHeader props={{header: "Image"}}/> */}
-                 <div className="flex flex-row">
-                    {/* <div className="relative"> */} 
-                        {/* <input
-                            type="file"
-                            accept=".jpg, .png"
-                            onChange={handleFileUpload}
-                            id="fileUpload"
-                            className="hidden"
-                        />
+                { imageFlag && <TextSubHeader props={{header: "Image"}}/>}
+                <div className="flex flex-row">
+                    { imageFlag ? <>
+                            <div className="relative">
+                            <input
+                                type="file"
+                                accept=".jpg, .png"
+                                onChange={handleFileUpload}
+                                id="fileUpload"
+                                className="hidden"
+                            />
 
-                        <label
-                            htmlFor="fileUpload"
-                            className="inline-block mb-1 py-1 px-2 border rounded-lg  border-gray-700 text-white font-semibold hover:border-gray-400 focus:outline-none focus:ring-2  hover:text-gray-100 transition duration-300 ease-in-out"
-                        >
-                            Upload File
-                        </label> */}
-                    {/* </div>
-                    {
-                        imageDisplay ?
-                            <button className= "cursor-none ml-2 inline-block mb-1 py-1 px-2 border rounded-lg border-gray-700 text-white font-semibold hover:border-gray-400 focus:outline-none focus:ring-2  hover:text-gray-100 transition duration-300 ease-in-out" onClick={handleView}> View</button>
-                            : null
-                    } */}
+                            <label
+                                htmlFor="fileUpload"
+                                className="inline-block mb-1 py-1 px-2 border rounded-lg  border-gray-700 text-white font-semibold hover:border-gray-400 focus:outline-none focus:ring-2  hover:text-gray-100 transition duration-300 ease-in-out"
+                            >
+                                Upload File
+                            </label>
+                            </div>
+                            {
+                                imageDisplay ?
+                                <button className= "cursor-none ml-2 inline-block mb-1 py-1 px-2 border rounded-lg border-gray-700 text-white font-semibold hover:border-gray-400 focus:outline-none focus:ring-2  hover:text-gray-100 transition duration-300 ease-in-out" onClick={handleView}> View</button>
+                                : null
+                            }
+                    </> : null
+                    }
 
                 </div>
 
-                {/* {
-                    imageDisplay && (
+                {
+                    imageDisplay && imageFlag && (
                         <img src={imageToDisplay} alt="uploaded image" className="w-[30%] mb-2"/>
                     )
-                } */}
+                }
 
                 <TextSubHeader props={{header: "Code"}}/>
                 <textarea
