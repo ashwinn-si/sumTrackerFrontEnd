@@ -4,6 +4,7 @@ import React, {useEffect, useState} from "react";
 import TextSubHeader from "./TextSubHeader";
 import TosterMessage from "./TosterMessage";
 import {useNavigate} from "react-router-dom";
+import DropDownBox from "./DropDownBox";
 
 function SnippetContainer(props) {
     const [userCode , setUserCode] = useState(props.props.snippetData.code);
@@ -15,6 +16,7 @@ function SnippetContainer(props) {
     const [imageFlag , setImageFlag] = useState(false);
     const navigate = useNavigate();
     const [imageToDisplay, setImageToDisplay] = useState(null);
+    const [language, setLanguage] = useState(props.props.snippetData.language || "text");
     const API_URL = "https://sumtrackerbackend.onrender.com";
     // const API_URL = "http://localhost:5000";
 
@@ -41,7 +43,7 @@ function SnippetContainer(props) {
 
     function handleClose(){
         showToast("Saving Data")
-        props.props.close(userCode,props.props.index,image,uploadFlag,prevDbID)
+        props.props.close(userCode,props.props.index,image,uploadFlag,prevDbID,language)
     }
 
     function handleCopy(){
@@ -79,6 +81,11 @@ function SnippetContainer(props) {
         // Always use imageToDisplay for localStorage and opening new window
         localStorage.setItem("imageURL", JSON.stringify(imageToDisplay));
         window.open(`/${props.props.email}/${props.props.folderName}/image-display`, '_blank');
+    }
+
+
+    function changeHandler(e){
+        setLanguage(e.target.value);
     }
 
     useEffect(() => {
@@ -149,7 +156,17 @@ function SnippetContainer(props) {
                         <img src={imageToDisplay} alt="uploaded image" className="w-[30%] mb-2"/>
                     )
                 }
-
+                <div>
+                    <TextSubHeader props={{header: "Language"}}/>
+                    <select className="bg-primary  p-[2%]  text-left text-text_secondary shadow-[rgba(50,_50,_105,_0.4)_0px_8px_20px_0px,_rgba(0,_0,_0,_0.2)_0px_4px_4px_0px] false rounded-md border border-zinc-800" value={language} onChange={changeHandler}
+                    >
+                        <option value="text" className="text-text_primary">Text</option>
+                        <option value="java" className="text-text_primary">Java</option>
+                        <option value="python" className="text-text_primary">Python</option>
+                        <option value="c++" className="text-text_primary">C++</option>
+                        <option value="js" className="text-text_primary">JavaScript</option>
+                    </select>
+                </div>
                 <TextSubHeader props={{header: "Code"}}/>
                 <textarea
                     className="w-full h-[40%] p-4 bg-primary text-gray-200 font-mono text-sm border border-gray-700 rounded-md resize-none overflow-y-auto focus:outline-none focus:border-gray-200 transition duration-300 ease-in-out"

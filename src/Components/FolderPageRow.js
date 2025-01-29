@@ -9,10 +9,16 @@ import snippet from "../Assests/Images/snippet.png"
 import notepad from "../Assests/Images/notepad.png"
 import notepadContains from "../Assests/Images/notepad-added.png"
 import snippetContains from "../Assests/Images/snippetContains.png"
+import java from "./../Assests/Images/Languages/java.png"
+import python from "../Assests/Images/Languages/py.png"
+import js from "./../Assests/Images/Languages/js.png"
+import text from "./../Assests/Images/Languages/text.png"
+import c_plus_plus from "./../Assests/Images/Languages/c++.png"
 
 const FolderPageRow  = forwardRef((props,ref) => {
     const defaultValue = props.props;
     const [date , setDate] = useState(defaultValue.date!== null ? new Date(defaultValue.date).toISOString().split('T')[0] : new Date());
+    const [language , setLanguage] = useState("");
     const Refs = {
         QuestionName : useRef(""),
         QuestionNumber : useRef(0),
@@ -53,6 +59,26 @@ const FolderPageRow  = forwardRef((props,ref) => {
         defaultValue.handleSnipper(defaultValue.index);
     }
 
+    useEffect(() => {
+       switch(defaultValue.language) {
+           case "text":
+               setLanguage(text);
+               break;
+           case "java":
+               setLanguage(java);
+               break;
+           case "python":
+               setLanguage(python);
+               break;
+           case "js":
+               setLanguage(js);
+               break;
+           case "c++":
+               setLanguage(c_plus_plus);
+               break;
+       }
+    },[defaultValue])
+
     return (
         <div className="w-full p-3  flex justify-evenly items-center">
             <div className="w-[5vw]">
@@ -66,9 +92,12 @@ const FolderPageRow  = forwardRef((props,ref) => {
                        className="w-[95%] p-[2%]   bg-transparent text-center text-text_secondary  transition-all duration-300 shadow-[rgba(50,_50,_105,_0.4)_0px_8px_20px_0px,_rgba(0,_0,_0,_0.2)_0px_4px_4px_0px] false rounded-md border border-zinc-800"
                        onChange={handleDateChange}/>
             </div>
-            <div className="w-[24vw]">
+            <div className="w-[19vw]">
                 <FolderInputBox props={{placeholder: "Problem No.", type: "Number", value: defaultValue.QuestionNumber}}
                                 ref={Refs.QuestionNumber}/>
+            </div>
+            <div className="w-[5vw] flex justify-center items-center">
+                <img src={language} className="w-[50%]"/>
             </div>
             <div className="w-[24vw]">
                 <FolderInputBox props={{placeholder: "Problem Name", type: "text", value: defaultValue.QuestionName}}

@@ -9,8 +9,11 @@ function FolderHeader(props) {
             <div className="w-[10vw]">
                 <p className="text-l text-text_primary font-semibold">Date</p>
             </div>
-            <div className="w-[24vw]">
+            <div className="w-[19vw]">
                 <p className="text-l text-text_primary font-semibold ">Question <br/> No</p>
+            </div>
+            <div className="w-[5vw]">
+
             </div>
             <div className="w-[24vw]">
                 <p className="text-l text-text_primary font-semibold ">Question <br/> Name</p>

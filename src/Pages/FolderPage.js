@@ -174,7 +174,7 @@ function FolderPage(props) {
     }
 
 
-    function snippetClose(code,targetIndex,img,uploadFlag,prevDBID){
+    function snippetClose(code,targetIndex,img,uploadFlag,prevDBID,language){
         if(uploadFlag){
             //if uploadflag is true and there already exsist a img in db and a new img is uploaded then we need to delete the previous image and create a new image | else create a new image
             if(prevDBID){
@@ -203,6 +203,7 @@ function FolderPage(props) {
 
         }
         allQuestions[targetIndex].Snippet.code = code;
+        allQuestions[targetIndex].Snippet.language = language;
         setSnippetFlag(false);
     }
     useEffect(() => {
@@ -287,11 +288,12 @@ function FolderPage(props) {
             <TextHeader props={{ header: folderName }} />
             <FolderHeader />
             {
-                snippetFlag ? < SnippetContainer props={{header : snippetHeader , close:snippetClose , snippetData , index : snippetOpenIndex, folderName : btoa(folderName),email : btoa(email)}}/> : null
-            }
-            {
                 noteFlag && <NotepadContainer props={{header : noteHeader , close : handleNotepadClose , index : noteIndex , note : noteData}}/>
             }
+            {
+                snippetFlag ? < SnippetContainer props={{header : snippetHeader , close:snippetClose , snippetData , index : snippetOpenIndex, folderName : btoa(folderName),email : btoa(email)}}/> : null
+            }
+            {loaderFlag && <LoaderPage loadermessage={loaderMessage}/>}
             <div className="overflow-y-auto w-[95vw] p-3 mx-[2.5vw] my-[1vw] flex justify-evenly items-center text-center flex-col shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] false rounded-md border border-zinc-800">
                 {
                     allQuestions.map((item, index) => {
@@ -308,6 +310,7 @@ function FolderPage(props) {
                                         Revise: item.Revise || false,
                                         Note : item.Note || "",
                                         index,
+                                        language : item.Snippet.language || "text",
                                         handleDelete: handleDeleteQuestionHelper,
                                         handleSnipper : handleOpenSnippetHelper,
                                         handleNotepad : handleNotepad,
@@ -321,9 +324,10 @@ function FolderPage(props) {
                         return null; // Skip rendering for null/undefined items
                     })
                 }
-                {loaderFlag && <LoaderPage loadermessage={loaderMessage}/>}
+
                 <div className="w-full flex justify-center items-center ">
                     <Button props={{ content: "Add Question", onClick: addQuestionHelper }} />
+                    <Button props={{ content: "Save", onClick: saveQuestionHelper }} />
                     <Button props={{ content: "Generate Excel", onClick: generateExcel }} />
                 </div>
 
