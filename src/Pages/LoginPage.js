@@ -113,7 +113,7 @@ function LoginPage() {
                         type="email"
                         autoComplete="email"
                         required
-                        className="m-3 p-2 px-4 bg-transparent text-left shadow-[rgba(50,_50,_105,_0.25)_0px_4px_10px_0px,_rgba(0,_0,_0,_0.1)_0px_2px_2px_0px] false rounded-md border border-zinc-600 text-text_secondary  hover:border-dotted transition-all duration-300 "
+                        className="m-3 p-2 px-6 bg-transparent text-left shadow-[rgba(50,_50,_105,_0.25)_0px_4px_10px_0px,_rgba(0,_0,_0,_0.1)_0px_2px_2px_0px] false rounded-md border border-zinc-600 text-text_secondary  hover:border-dotted transition-all duration-300 "
                     />
                     <input
                         placeholder="Password"
@@ -121,7 +121,7 @@ function LoginPage() {
                         type="password"
                         autoComplete="password"
                         required
-                        className="m-3 p-2 px-4  bg-transparent text-left shadow-[rgba(50,_50,_105,_0.25)_0px_4px_10px_0px,_rgba(0,_0,_0,_0.1)_0px_2px_2px_0px] false rounded-md border border-zinc-600 text-text_secondary  hover:border-dotted transition-all duration-300 "
+                        className="m-3 p-2 px-6  bg-transparent text-left shadow-[rgba(50,_50,_105,_0.25)_0px_4px_10px_0px,_rgba(0,_0,_0,_0.1)_0px_2px_2px_0px] false rounded-md border border-zinc-600 text-text_secondary  hover:border-dotted transition-all duration-300 "
                     />
 
                     <div className="v-[100vw] flex justify-center items-center flex-col">
